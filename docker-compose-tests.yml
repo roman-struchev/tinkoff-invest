@@ -4,6 +4,7 @@ services:
   invest-tests:
     image: 'romanew/invest:latest-tests'
     container_name: invest-tests
+    environment:
+      - tinkoff.is-token-sandbox=false
+      - tinkoff.token=${TINKOFF_TOKEN}
     mem_limit: 768m
-    volumes:
-      - ./gradle-home:/home/gradle/.gradle

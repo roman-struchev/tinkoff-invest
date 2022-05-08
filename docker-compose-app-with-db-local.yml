@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  invest-app:
+    image: 'romanew/invest:latest'
+    container_name: invest-app
+    depends_on:
+      - invest-db
+    ports:
+      - 10000:10000
+    environment:
+      - spring.datasource.url=jdbc:postgresql://invest-db:5432/postgres
+      - spring.datasource.username=posgres
+      - spring.datasource.password=posgres
+      - candle.listener.enabled=true
+      - tinkoff.emulator=false
+      - tinkoff.is-token-sandbox=true
+      - tinkoff.token=
+      - tinkoff.account-id=
+  invest-db:
+    image: 'postgres:13.4-alpine'
+    container_name: invest-db
+    volumes:
+      - ./postgresql:/var/lib/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=posgres
+      - POSTGRES_PASSWORD=posgres

@@ -40,13 +40,13 @@ public abstract class AInstrumentByFiatStrategy extends AStrategy {
     @Builder
     @Data
     public static class SellCriteria {
-        // Процент (перцентиль), если цена за указанный период падает ниже него, продаем
+        // Процент (stop loss), если цена покупки падает на него, продаем
         Float stopLossPercent;
         // Процент (перцентиль), если цена за указанный период падает ниже него, продаем
         Integer stopLossPercentile;
-        // Процент (take profit), если цена за указанный период падает на него, продаем
+        // Процент (take profit), если цена покупки растет на него, продаем
         Float takeProfitPercent;
-        // Процент (take profit, перцентиль), если цена за указанный период падает ниже него, продаем
+        // Процент (take profit, перцентиль), если цена за указанный период растет выше него, продаем
         Integer takeProfitPercentile;
     }
 

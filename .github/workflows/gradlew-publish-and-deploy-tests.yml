@@ -24,11 +24,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Copy docker-compose-image-app.yml
+      - name: Copy docker-compose-tests.yml
         uses: garygrossgarten/github-action-scp@release
         with:
-          local: docker-compose-image-tests.yml
-          remote: ./invest/docker-compose-image-tests.yml
+          local: docker-compose-tests.yml
+          remote: ./invest/docker-compose-tests.yml
           host: 193.17.92.2
           username: root
           privateKey: ${{ secrets.SSH_PRIVATE_KEY_ZTV }}
@@ -41,6 +41,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY_ZTV }}
           script: |
             cd invest
+            export TINKOFF_TOKEN=${{ secrets.TINKOFF_TOKEN }}
             docker-compose -f docker-compose-image-tests-app.yml down
             docker-compose -f docker-compose-image-tests-app.yml pull
             docker-compose -f docker-compose-image-tests-app.yml up -d

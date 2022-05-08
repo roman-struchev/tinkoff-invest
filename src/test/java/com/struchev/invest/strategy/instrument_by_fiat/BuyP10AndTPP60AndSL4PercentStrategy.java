@@ -3,7 +3,7 @@ package com.struchev.invest.strategy.instrument_by_fiat;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BuyP10AndTPP50AndSL4PercentStrategy extends AInstrumentByFiatTestStrategy {
+public class BuyP10AndTPP60AndSL4PercentStrategy extends AInstrumentByFiatTestStrategy {
 
     @Override
     public BuyCriteria getBuyCriteria() {
@@ -12,6 +12,6 @@ public class BuyP10AndTPP50AndSL4PercentStrategy extends AInstrumentByFiatTestSt
 
     @Override
     public SellCriteria getSellCriteria() {
-        return SellCriteria.builder().takeProfitPercentile(50).stopLossPercent(4f).build();
+        return SellCriteria.builder().takeProfitPercentile(60).stopLossPercent(4f).build();
     }
 }
