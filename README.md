@@ -5,10 +5,10 @@
 ##### Tinkoff API
 Описание [Tinkoff invest API](https://tinkoff.github.io/investAPI/)
 ```properties
-tinkoff.token - токен для Tinkoff GRPC API
-tinkoff.is-token-sandbox - true для токена с песочницы, false для боевого
-tinkoff.account-id - ID счета в Tinkoff (опционально, будет выбран первый счет, если не указано)
-tinkoff.emulator - true для эмуляции запросов по ордерам, false для вызова Tinkoff API
+tinkoff.token: токен для Tinkoff GRPC API
+tinkoff.is-token-sandbox: true для токена с песочницы, false для боевого
+tinkoff.account-id: ID счета в Tinkoff (опционально, будет выбран первый счет, если не указано)
+tinkoff.emulator: true для эмуляции запросов по ордерам, false для вызова Tinkoff API
 ```
 ##### Telegram API (опционально, уведомления об ордерах и ошибках)
 ```properties
@@ -103,7 +103,11 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
 # Тестирование стратегий по историческим данным
 
-##### Используя gradlew
+##### Конфигурация
+```properties
+candle.history.duration: Период потока исторических свечей, необходимый для теста. Пример: P10D (формат java.time.Duration)
+```
+##### Запуск используя gradlew
 Требуется docker, jdk 11+
 
 1. Обновить конфигурацию (свойства) в [src/test/resources/application-test.properties](src/test/resources/application-test.properties)

@@ -3,7 +3,9 @@ package com.struchev.invest.service.candle;
 import com.struchev.invest.entity.CandleDomainEntity;
 import com.struchev.invest.repository.CandleRepository;
 import com.struchev.invest.service.tinkoff.ITinkoffCommonAPI;
+import com.struchev.invest.strategy.AStrategy;
 import com.struchev.invest.strategy.StrategySelector;
+import com.struchev.invest.strategy.instrument_by_fiat.AInstrumentByFiatStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -170,7 +172,13 @@ public class CandleHistoryService {
     @PostConstruct
     void init() {
         firstCandleDateTimeByFigi = new ConcurrentHashMap<>();
-        requestCandlesHistoryForDays(historyDuration.toDays());
+        var historyDurationByStrategies = strategySelector.getActiveStrategies().stream()
+                .filter(s -> s.getType() == AStrategy.Type.instrumentByFiat)
+                .map(s -> ((AInstrumentByFiatStrategy) s).getHistoryDuration())
+                .reduce((d1, d2) -> d1.toSeconds() > d2.toSeconds() ? d1 : d2)
+                .stream().findFirst().orElse(Duration.ZERO);
+        requestCandlesHistoryForDays(historyDurationByStrategies.toSeconds() > historyDuration.toSeconds()
+                ? historyDurationByStrategies.toDays() : historyDuration.toDays());
 
         if (!isCandleListenerEnabled) {
             var candles = candleRepository.findByIntervalOrderByDateTime("1min");
