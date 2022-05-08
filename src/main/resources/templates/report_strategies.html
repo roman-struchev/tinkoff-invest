@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head th:insert="fragments/head.html"/>
+<body>
+<header th:insert="fragments/header.html"/>
+<div class="container">
+    <div class="card mt-3" th:each="s: ${reportStrategiesInfo}">
+        <div class="card-header">
+            <b><span th:text="${s.name}"/></b> (<span th:text="${s.type}"/>)
+        </div>
+        <div class="card-body">
+            <table class="table table-sm">
+                <tbody>
+                <tr>
+                    <td>Инструменты</td>
+                    <td th:text="${s.figies}"/>
+                </tr>
+                <tr th:if="${s.buyCriteria != null}">
+                    <td>Критерии покупки</td>
+                    <td>
+                        <div>Перцентиль: <span th:text="${s.buyCriteria.lessThenPercentile}"/></div>
+                    </td>
+                </tr>
+                <tr th:if="${s.sellCriteria != null}">
+                    <td>Критерии продажи</td>
+                    <td>
+                        <div th:if="${s.sellCriteria.takeProfitPercentile}">
+                            Прибыть: <span th:text="${s.sellCriteria.takeProfitPercent}"/> %
+                        </div>
+                        <div th:if="${s.sellCriteria.stopLossPercent}">Убыток: <span
+                                th:text="${s.sellCriteria.stopLossPercent}"/>%
+                        </div>
+                        <div th:if="${s.sellCriteria.takeProfitPercent}">
+                            Рост, перцентиль: <span th:text="${s.sellCriteria.takeProfitPercentile}"/></div>
+                        <div th:if="${s.sellCriteria.stopLossPercentile}">
+                            Падение, перцентиль: <span th:text="${s.sellCriteria.stopLossPercentile}"/></div>
+                    </td>
+                </tr>
+                <tr th:if="${s.history != null}">
+                    <td>Период анализа</td>
+                    <td><span th:text="${s.history.toDays()}"/> дней</td>
+                </tr>
+                <tr th:if="${s.dropPercent != null}">
+                    <td>Перекложить при профите</td>
+                    <td><span th:text="${s.dropPercent}"/> %</td>
+                </tr>
+                </th>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

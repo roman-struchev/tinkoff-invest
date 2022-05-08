@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<head th:insert="fragments/head.html"/>
+<body>
+<header th:insert="fragments/header.html"/>
+<div class="container mt-3">
+    <input class="form-control" id="orders-filter-input" type="text"
+           placeholder="Type something in to search the table">
+    <br>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Instrument</th>
+            <th>Strategy</th>
+            <th>Purchase price</th>
+            <th>Purchase time</th>
+            <th>Sell price</th>
+            <th>Sell time</th>
+            <th>Commission</th>
+        </tr>
+        </thead>
+        <tbody id="orders-table">
+        <tr th:each="o: ${orders}">
+            <td th:text="${o.figiTitle}"/>
+            <td th:text="${o.strategy}"/>
+            <td th:text="${#numbers.formatDecimal(o.purchasePrice, 1, 4, 'DEFAULT')}"/>
+            <td th:text="${{o.purchaseDateTime}}"/>
+            <td th:text="${o.sellPrice == null ? null : #numbers.formatDecimal(o.sellPrice, 1, 4, 'DEFAULT')}"/>
+            <td th:text="${{o.sellDateTime}}"/>
+            <td th:text="${#numbers.formatDecimal(o.purchaseCommission.add(o.sellCommission == null ? 0 : o.sellCommission), 1, 2, 'DEFAULT')}"/>
+        </tr>
+        </tbody>
+    </table>
+    <script>
+        $(document).ready(function () {
+            $("#orders-filter-input").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#orders-table tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

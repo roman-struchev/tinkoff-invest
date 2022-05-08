@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<head th:insert="fragments/head.html"/>
+<body>
+<header th:insert="fragments/header.html"/>
+<div class="container mt-3">
+    <input class="form-control" id="instr-vs-fiat-filter-input" type="text"
+           placeholder="Type something in to search the table">
+    <br>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Strategy</th>
+            <th>Profit by robot, %</th>
+            <th>Profit by invest, %</th>
+            <th>Orders</th>
+            <th>First price</th>
+            <th>Last price</th>
+        </tr>
+        </thead>
+        <tbody id="instr-vs-fiat-table">
+        <tr th:each="r: ${reportInstrumentByFiat}">
+            <td th:text="${r.figiTitle}"/>
+            <td th:text="${r.strategy}"/>
+            <td th:text="${#numbers.formatDecimal(r.profitByRobot, 1, 2, 'DEFAULT')}"/>
+            <td th:text="${#numbers.formatDecimal(r.profitByInvest, 1, 2, 'DEFAULT')}"/>
+            <td th:text="${r.orders}"/>
+            <td th:text="${#numbers.formatDecimal(r.firstPrice, 1, 2, 'DEFAULT')}"/>
+            <td th:text="${#numbers.formatDecimal(r.lastPrice, 1, 2, 'DEFAULT')}"/>
+        </tr>
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+            $("#instr-vs-fiat-filter-input").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#instr-vs-fiat-table tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

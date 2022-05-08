@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container">
+        <a class="navbar-brand" href="#">Invest robot</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbar" class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${reportStrategiesInfo != null} ? active" href="/strategies">Стратегии</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${orders != null} ? active" href="/orders">Операции</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${reportInstrumentByInstrument != null} ? active"
+                       href="/instrument_by_instrument">Инструмент за инструмент</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${reportInstrumentByFiat != null} ? active"
+                       href="/instrument_by_fiat">Инструмент за фиат</a>
+                </li>
+            </ul>
+            <div class="nav-item">
+                <a class="text-decoration-none" href="https://github.com/roman-struchev/tinkoff-invest" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </div>
+</nav>

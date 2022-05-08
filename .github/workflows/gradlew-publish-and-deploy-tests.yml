@@ -1,0 +1,47 @@
+name: Deploy tests
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  publish-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: romanew/invest:latest-tests
+          username: ${{ secrets.DOCKER_PUBLISH_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_PUBLISH_REGISTRY_PASSWORD }}
+          dockerfile: Dockerfile.Tests
+
+  deploy-tests:
+    needs: publish-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Copy docker-compose-image-app.yml
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: docker-compose-image-tests.yml
+          remote: ./invest/docker-compose-image-tests.yml
+          host: 193.17.92.2
+          username: root
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY_ZTV }}
+
+      - name: Start using docker-compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: 193.17.92.2
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY_ZTV }}
+          script: |
+            cd invest
+            docker-compose -f docker-compose-image-tests-app.yml down
+            docker-compose -f docker-compose-image-tests-app.yml pull
+            docker-compose -f docker-compose-image-tests-app.yml up -d
+

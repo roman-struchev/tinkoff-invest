@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  invest-app:
+    image: 'romanew/invest:latest'
+    container_name: invest-app
+    network_mode: host
+    environment:
+      - spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/invest
+      - spring.datasource.username=${POSTGRES_USER}
+      - spring.datasource.password=${POSTGRES_PASSWORD}
+      - candle.listener.enabled=true
+      - tinkoff.emulator=false
+      - tinkoff.is-token-sandbox=false
+      - tinkoff.token=${TINKOFF_TOKEN}
+      - tinkoff.account-id=2090809704
+      - telegram.bot.token=${TELEGRAM_BOT_TOKEN}
+      - telegram.bot.chat-id=${TELEGRAM_BOT_CHAT_ID}
+    restart: always
+    mem_limit: 384m

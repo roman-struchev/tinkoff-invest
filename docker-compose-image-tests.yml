@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  invest-tests:
+    image: 'romanew/invest:latest-tests'
+    container_name: invest-tests
+    mem_limit: 768m
+    volumes:
+      - ./gradle-home:/home/gradle/.gradle

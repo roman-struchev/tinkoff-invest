@@ -1,0 +1,61 @@
+name: Deploy production
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish-app:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Build jar
+      run: ./gradlew bootJar
+
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: romanew/invest:latest
+        username: ${{ secrets.DOCKER_PUBLISH_REGISTRY_USERNAME }}
+        password: ${{ secrets.DOCKER_PUBLISH_REGISTRY_PASSWORD }}
+        dockerfile: Dockerfile.App
+
+  deploy-app:
+    needs: publish-app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Copy docker-compose-image-app.yml
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: docker-compose-image-app.yml
+          remote: ./invest/docker-compose-image-app.yml
+          host: 193.17.92.2
+          username: root
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY_ZTV }}
+
+      - name: Start using docker-compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: 193.17.92.2
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY_ZTV }}
+          script: |
+            cd invest
+            export TINKOFF_TOKEN=${{ secrets.TINKOFF_TOKEN }}
+            export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+            export TELEGRAM_BOT_CHAT_ID=${{ secrets.TELEGRAM_BOT_CHAT_ID }}
+            docker-compose -f docker-compose-image-app.yml down
+            docker-compose -f docker-compose-image-app.yml pull
+            docker-compose -f docker-compose-image-app.yml up -d
+
