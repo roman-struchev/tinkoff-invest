@@ -43,19 +43,22 @@ public class InstrumentService {
     @PostConstruct
     @Retryable
     private void init() {
-        // load all instruments async
-        var sharesFuture = tinkoffCommonAPI.getApi().getInstrumentsService().getAllShares();
-        var futuresFuture = tinkoffCommonAPI.getApi().getInstrumentsService().getAllFutures();
-        var boundsFuture = tinkoffCommonAPI.getApi().getInstrumentsService().getAllBonds();
-        var etfsFuture = tinkoffCommonAPI.getApi().getInstrumentsService().getAllEtfs();
-        var currenciesFuture = tinkoffCommonAPI.getApi().getInstrumentsService().getAllCurrencies();
-
-        // save instruments to memory
+        // load all instruments and save instruments to memory
         instrumentByFigi = new ConcurrentHashMap<>();
-        sharesFuture.get().forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
-        futuresFuture.get().forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
-        boundsFuture.get().forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
-        etfsFuture.get().forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
-        currenciesFuture.get().forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
+
+        var shares = tinkoffCommonAPI.getApi().getInstrumentsService().getAllSharesSync();
+        shares.forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
+
+        var futures = tinkoffCommonAPI.getApi().getInstrumentsService().getAllFuturesSync();
+        futures.forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
+
+        var bounds = tinkoffCommonAPI.getApi().getInstrumentsService().getAllBondsSync();
+        bounds.forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
+
+        var etfs = tinkoffCommonAPI.getApi().getInstrumentsService().getAllEtfsSync();
+        etfs.forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
+
+        var currencies = tinkoffCommonAPI.getApi().getInstrumentsService().getAllCurrenciesSync();
+        currencies.forEach(i -> instrumentByFigi.put(i.getFigi(), new Instrument(i.getFigi(), i.getCurrency(), i.getName(), i.getLot())));
     }
 }
