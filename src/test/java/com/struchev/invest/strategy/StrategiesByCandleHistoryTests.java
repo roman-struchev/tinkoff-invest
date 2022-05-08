@@ -18,6 +18,8 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 
+import static org.junit.Assert.assertTrue;
+
 @SpringBootTest
 @Slf4j
 @ActiveProfiles(profiles = "test")
@@ -38,6 +40,9 @@ class StrategiesByCandleHistoryTests {
     @Value("${candle.history.duration}")
     private Duration historyDuration;
 
+    @Value("${tinkoff.emulator}")
+    private Boolean isTinkoffEmulator;
+
     @BeforeEach
     public void clean() {
         // clean all existing orders in DB
@@ -47,6 +52,9 @@ class StrategiesByCandleHistoryTests {
 
     @Test
     void checkProfitByStrategies() {
+        // Check properties for test profile
+        assertTrue("Tests are allowed with Tinkoff API emulator only (tinkoff.emulator=true)", isTinkoffEmulator);
+
         // Emulating candle events
         var days = historyDuration.toDays();
         var startDateTime = OffsetDateTime.now().minusDays(days);

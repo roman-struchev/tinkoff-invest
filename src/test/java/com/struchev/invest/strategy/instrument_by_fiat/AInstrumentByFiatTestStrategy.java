@@ -6,7 +6,7 @@ import java.util.Map;
 public abstract class AInstrumentByFiatTestStrategy extends AInstrumentByFiatStrategy {
 
     private Map FIGIES = Map.of(
-//            "BBG004730N88", 10,    // SBER
+            "BBG004730N88", 10,    // SBER
 //            "BBG006L8G4H1", 1,    //Yandex
 //            "BBG00178PGX3", 1,    //VK
 //            "BBG004730JJ5", 1,    // Московская биржа

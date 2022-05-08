@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -122,7 +123,9 @@ public class ReportService {
                             .percent(new BigDecimal(percent).setScale(2, RoundingMode.HALF_UP))
                             .duration(Duration.between(initDate, lastDate))
                             .build();
-                }).collect(Collectors.toList());
+                })
+                .sorted(Comparator.comparing(OrderReportInstrumentByInstrumentRow::getPercent))
+                .collect(Collectors.toList());
         return rows;
     }
 
