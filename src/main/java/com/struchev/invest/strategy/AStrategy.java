@@ -8,9 +8,20 @@ import java.util.Map;
 
 public abstract class AStrategy {
 
+    /**
+     * Карта FIGI: количество бумаг для торговли
+     *
+     * @return
+     */
     public abstract Map<String, Integer> getFigies();
 
-    public final Integer getLots(String figi) {
+    /**
+     * Количество бумаг для торговли заданным figi
+     *
+     * @param figi
+     * @return
+     */
+    public final Integer getCount(String figi) {
         return getFigies().get(figi);
     }
 
@@ -31,7 +42,7 @@ public abstract class AStrategy {
     @AllArgsConstructor
     public enum Type {
         instrumentByFiat("Инструмент за фиат"),
-        instrumentByInstrument("Инстручент за инструмент");
+        instrumentByInstrument("Инструмент за инструмент");
 
         @Getter
         String title;

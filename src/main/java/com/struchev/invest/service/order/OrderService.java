@@ -67,7 +67,7 @@ public class OrderService {
                 .purchasePrice(candle.getClosingPrice())
                 .strategy(strategy.getName())
                 .purchaseDateTime(candle.getDateTime())
-                .lots(strategy.getLots(candle.getFigi()))
+                .lots(strategy.getCount(candle.getFigi()))
                 .purchaseCommission(BigDecimal.ZERO)
                 .details(OrderDetails.builder().currentPrices(currentPrices).build())
                 .build();

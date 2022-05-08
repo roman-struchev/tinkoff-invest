@@ -1,15 +1,16 @@
 # Торговый робот для Тинкофф Инвестиций
 Разработан в рамках [Tinkoff Invest Robot Contest](https://github.com/Tinkoff/invest-robot-contest)
 
-# Конфигурация
+# Конфигурация (свойства)
 ##### Tinkoff API
+Описание [Tinkoff invest API](https://tinkoff.github.io/investAPI/)
 ```properties
 tinkoff.token - токен для Tinkoff GRPC API
+tinkoff.is-token-sandbox - true для токена с песочницы, false для боевого
 tinkoff.account-id - ID счета в Tinkoff (опционально, будет выбран первый счет, если не указано)
-tinkoff.is-token-sandbox - true/false (по типу токена)
-tinkoff.emulator - true/false (эмуляция запросов в tinkoff для выполнения ордеров)
+tinkoff.emulator - true для эмуляции запросов по ордерам, false для вызова Tinkoff API
 ```
-##### Telegram API (опционально, уведомления о сделках и ошибках)
+##### Telegram API (опционально, уведомления об ордерах и ошибках)
 ```properties
 telegram.bot.token: токен телеграм бота
 telegram.bot.chat-id: id чата, будет отправлен в чат, если написать боту любое сообщение
@@ -106,7 +107,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 Требуется docker, jdk 11+
 
 1. Обновить конфигурацию (свойства) в [src/test/resources/application-test.properties](src/test/resources/application-test.properties)
-2. Прописать стратегии в [src/test/java/com/struchev/invest/strategy](src/test/java/com/struchev/invest/strategy)
+2. Проверить/изменить стратегии в [src/test/java/com/struchev/invest/strategy](src/test/java/com/struchev/invest/strategy)
 3. Скомпилировать и запустить тесты
 ```shell
 ./gradlew clean test --info
@@ -117,8 +118,8 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 Стратегии находятся в [src/main/java/com/struchev/invest/strategy](src/main/java/com/struchev/invest/strategy)
 ##### Используя docker-compose
 Требуется docker и docker-compose
-1. Обновить конфигурацию (свойства) в [docker-compose-image-app-db.yml](docker-compose-app-with-db-local.yml)
-2. Прописать стратегии в [src/test/java/com/struchev/invest/strategy](src/test/java/com/struchev/invest/strategy) (опционально)
+1. Обновить конфигурацию (свойства) в [docker-compose-app-with-db-local.yml](docker-compose-app-with-db-local.yml)
+2. Проверить/изменить стратегии в [src/test/java/com/struchev/invest/strategy](src/test/java/com/struchev/invest/strategy) (опционально)
 3. Собрать docker образ локально (опционально, есть уже собранный https://hub.docker.com/repository/docker/romanew/invest)
     ```shell
     docker build -t romanew/invest:latest -f Dockerfile.App .
@@ -133,7 +134,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 Требуется posgresql, jdk 11+
 1. Обновить конфигурацию (свойства) и posgresql в одном из профилей. 
    Профили `application-*.properties` в [src/main/resources/](src/main/resources/).
-2. Прописать стратегии в [src/test/java/com/struchev/invest/strategy](src/test/java/com/struchev/invest/strategy) (опционально)
+2. Проверить/изменить стратегии в [src/test/java/com/struchev/invest/strategy](src/test/java/com/struchev/invest/strategy) (опционально)
 3. Скомпилировать и запустить приложение
     ```shell
     ./gradlew bootRun -Dspring.profiles.active=sandbox
@@ -153,3 +154,6 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 - /actuator/metrics 
 - /actuator/monitoring
 - /actuator/logfile
+
+# Статистика по брокерскому счету (out of scope)
+Более детальную статистику по брокерскому счету можно получить с помощью сервиса http://tinkoff-pro.struchev.site

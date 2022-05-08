@@ -44,10 +44,13 @@ public abstract class ATinkoffAPI implements ITinkoffCommonAPI, ITinkoffOrderAPI
         // Check that account exists if defined in conf or choose first account
         var accounts = isSandboxMode
                 ? api.getSandboxService().getAccountsSync() : api.getUserService().getAccountsSync();
+        log.info("Available accounts: {}", accounts.size());
+        accounts.forEach(a -> log.info("Account id {}, name {}", a.getId(), a.getName()));
         var account = accounts.stream()
                 .filter(a -> a.getType() == AccountType.ACCOUNT_TYPE_TINKOFF)
                 .filter(a -> StringUtils.isEmpty(accountId) || accountId.equals(a.getId()))
-                .findFirst().orElseThrow();
+                .findFirst().orElseThrow(() -> new RuntimeException("Account was not found for token " + token));
+        log.info("Will use Account id {}, name {}", account.getId(), account.getName());
         accountId = account.getId();
     }
 }

@@ -18,7 +18,7 @@ services:
       - tinkoff.token=
       - tinkoff.account-id=
   invest-db:
-    image: 'postgres:13.4-alpine'
+    image: 'postgres:14.1-alpine'
     container_name: invest-db
     volumes:
       - ./postgresql:/var/lib/postgresql

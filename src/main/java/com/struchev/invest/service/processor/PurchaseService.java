@@ -47,7 +47,7 @@ public class PurchaseService {
         var strategies = strategySelector.suitableByFigi(candleDomainEntity.getFigi(), null);
         strategies.parallelStream().forEach(strategy -> {
             // Ищем открытый ордер
-            // Для стратегии instrumentByInstrument нужен ордер по инструменту свечки (торгуется стратегия в разрезе инстручентов)
+            // Для стратегии instrumentByInstrument нужен ордер по инструменту свечки (торгуется стратегия в разрезе инструмента)
             // Для стратегии instrumentByInstrument нужен ордер по любому инструменту (торгуется вся стратегия целиком)
             var figiSuitableForOrder = strategy.getType() == AStrategy.Type.instrumentByFiat ? candleDomainEntity.getFigi() : null;
             var order = orderService.findActiveByFigiAndStrategy(figiSuitableForOrder, strategy);
