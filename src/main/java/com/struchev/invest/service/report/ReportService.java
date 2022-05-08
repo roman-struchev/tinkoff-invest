@@ -70,7 +70,7 @@ public class ReportService {
                 .map(r -> OrderReportInstrumentByFiatRow.builder()
                         .figiTitle(String.valueOf(r[0]))
                         .strategy(String.valueOf(r[1]))
-                        .profitByRobot(r[2] == null ? null : new BigDecimal(String.valueOf(r[2])).setScale(2, RoundingMode.HALF_UP))
+                        .profitByRobot(r[2] == null ? BigDecimal.ZERO : new BigDecimal(String.valueOf(r[2])).setScale(2, RoundingMode.HALF_UP))
                         .profitByInvest(new BigDecimal(String.valueOf(r[3])))
                         .orders(Integer.valueOf(String.valueOf(r[4])))
                         .firstPrice(new BigDecimal(String.valueOf(r[5])).setScale(2, RoundingMode.HALF_UP))
@@ -133,7 +133,7 @@ public class ReportService {
                     row.getStrategy(), row.getFigiTitle(), row.getFirstPrice(), row.getLastPrice(),
                     row.getProfitByRobot(), row.getProfitByInvest(), row.getOrders());
         }
-        log.info("---------------------- Report instrument by fiat end ------------------------");
+        log.info("---------------------- Report instrument by fiat end ------------------------\n");
     }
 
     public void logReportInstrumentByInstrument(List<OrderReportInstrumentByInstrumentRow> rows) {
@@ -144,7 +144,7 @@ public class ReportService {
                     row.getLastAmount(), row.getLastFigiTitle(), row.getPercent(), row.getOrders(),
                     row.getCommission(), row.getDuration().toDays());
         }
-        log.info("---------------------- Report instrument by instrument end ------------------------");
+        log.info("---------------------- Report instrument by instrument end ------------------------\n");
     }
 
     @SneakyThrows

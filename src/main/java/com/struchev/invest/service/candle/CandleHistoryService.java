@@ -15,12 +15,15 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 /**
@@ -34,11 +37,15 @@ public class CandleHistoryService {
     private final ITinkoffCommonAPI tinkoffCommonAPI;
     private final StrategySelector strategySelector;
     private final CandleRepository candleRepository;
+    private final EntityManager entityManager;
 
     private Map<String, OffsetDateTime> firstCandleDateTimeByFigi;
+    private Map<String, List<CandleDomainEntity>> candlesLocalCache;
 
     @Value("${candle.history.duration}")
     private Duration historyDuration;
+    @Value("${candle.listener.enabled}")
+    Boolean isCandleListenerEnabled;
 
     @Transactional
     public CandleDomainEntity addOrReplaceCandles(HistoricCandle newCandle, String figi) {
@@ -84,6 +91,19 @@ public class CandleHistoryService {
     }
 
     public List<CandleDomainEntity> getCandlesByFigiBetweenDateTimes(String figi, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        // если слушатель выключен - значит запускаем не в продакшн режиме, можем хранить свечки в памяти, а не на диске (БД)
+        if (!isCandleListenerEnabled) {
+            var candlesByFigi = candlesLocalCache.get(figi);
+            if (candlesByFigi.size() == 0) {
+                throw new RuntimeException("Candles not found in local cache for " + figi);
+            }
+            var candles = candlesByFigi.stream()
+                    .filter(c -> c.getDateTime().isAfter(startDateTime))
+                    .filter(c -> c.getDateTime().isBefore(endDateTime) || c.getDateTime().isEqual(endDateTime))
+                    .collect(Collectors.toList());
+            return candles;
+        }
+
         var candles = candleRepository.findByFigiAndIntervalAndBetweenDateTimes(figi,
                 "1min", startDateTime, endDateTime);
         return candles;
@@ -124,23 +144,20 @@ public class CandleHistoryService {
         }
 
         var now = OffsetDateTime.now();
-        var counter = new AtomicLong();
         var figies = strategySelector.getFigiesForActiveStrategies();
         log.info("Start to load history {} days, for figies {}", days, figies);
         figies.stream().forEach(figi -> {
             LongStream.range(0, days).forEach(i -> {
                 log.info("Request candles {}, {} day", figi, i);
                 var candles = requestCandles(figi, now.minusDays(i + 1), now.minusDays(i), CandleInterval.CANDLE_INTERVAL_1_MIN, 12);
-                candles.forEach(c -> addOrReplaceCandles(c, figi));
+            candles.forEach(c -> addOrReplaceCandles(c, figi));
             });
-            counter.addAndGet(1);
         });
 
-        var count = counter.get();
         log.info("Loaded to load history for {} days", days);
     }
 
-    public OffsetDateTime getFirstCandlDateTime(String figi) {
+    public OffsetDateTime getFirstCandleDateTime(String figi) {
         var firstCandleDateTime = firstCandleDateTimeByFigi.get(figi);
         if (firstCandleDateTime == null) {
             var firstCandle = candleRepository.findByFigiAndIntervalOrderByDateTime(figi, "1min").get(0);
@@ -154,5 +171,12 @@ public class CandleHistoryService {
     void init() {
         firstCandleDateTimeByFigi = new ConcurrentHashMap<>();
         requestCandlesHistoryForDays(historyDuration.toDays());
+
+        if (!isCandleListenerEnabled) {
+            var candles = candleRepository.findByIntervalOrderByDateTime("1min");
+            candlesLocalCache = candles.stream()
+                    .peek(c -> entityManager.detach(c))
+                    .collect(Collectors.groupingBy(CandleDomainEntity::getFigi));
+        }
     }
 }

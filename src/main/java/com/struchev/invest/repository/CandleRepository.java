@@ -8,6 +8,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface CandleRepository extends JpaRepository<CandleDomainEntity, Long> {
+    List<CandleDomainEntity> findByIntervalOrderByDateTime(String interval);
+
     List<CandleDomainEntity> findByFigiAndIntervalOrderByDateTime(String figi, String interval);
 
     CandleDomainEntity findByFigiAndIntervalAndDateTime(String figi, String interval, OffsetDateTime dateTime);

@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
@@ -56,7 +55,7 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
                                  Function<? super CandleDomainEntity, ? extends BigDecimal> keyExtractor,
                                  Duration duration) {
         // недостаточно данных за промежуток (первая свечка пришла позже начала интервала) - не калькулируем
-        var firstCandleDateTime = candleHistoryService.getFirstCandlDateTime(figi);
+        var firstCandleDateTime = candleHistoryService.getFirstCandleDateTime(figi);
         if(currentDateTime.minus(duration).isBefore(firstCandleDateTime)) {
             return null;
         }
