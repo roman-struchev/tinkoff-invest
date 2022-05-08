@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
@@ -54,13 +55,17 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
     private BigDecimal calculate(OffsetDateTime currentDateTime, String figi, int percentile,
                                  Function<? super CandleDomainEntity, ? extends BigDecimal> keyExtractor,
                                  Duration duration) {
+        // недостаточно данных за промежуток (первая свечка пришла позже начала интервала) - не калькулируем
+        var firstCandleDateTime = candleHistoryService.getFirstCandlDateTime(figi);
+        if(currentDateTime.minus(duration).isBefore(firstCandleDateTime)) {
+            return null;
+        }
+
         var startDateTime = currentDateTime.minus(duration);
         var candleHistoryLocal = candleHistoryService.getCandlesByFigiBetweenDateTimes(figi,
                 startDateTime, currentDateTime);
-        candleHistoryLocal.sort(Comparator.comparing(keyExtractor));
-        int index = candleHistoryLocal.size() * percentile / 100;
 
-        // недостаточно данных за промежуток - не калькулируем
+        // недостаточно данных за промежуток (мало свечек) - не калькулируем
         if (Duration.ofMinutes(30).compareTo(duration) <= 0 && candleHistoryLocal.size() < 15) {
             return null;
         } else if (Duration.ofHours(1).compareTo(duration) <= 0 && candleHistoryLocal.size() < 30) {
@@ -68,6 +73,9 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
         } else if (Duration.ofHours(2).compareTo(duration) <= 0 && candleHistoryLocal.size() < 60) {
             return null;
         }
+
+        candleHistoryLocal.sort(Comparator.comparing(keyExtractor));
+        int index = candleHistoryLocal.size() * percentile / 100;
         return Optional.ofNullable(candleHistoryLocal.get(index)).map(keyExtractor).orElse(null);
     }
 

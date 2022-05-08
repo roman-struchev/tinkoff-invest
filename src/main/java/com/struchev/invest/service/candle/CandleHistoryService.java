@@ -18,6 +18,8 @@ import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.LongStream;
 
@@ -32,6 +34,8 @@ public class CandleHistoryService {
     private final ITinkoffCommonAPI tinkoffCommonAPI;
     private final StrategySelector strategySelector;
     private final CandleRepository candleRepository;
+
+    private Map<String, OffsetDateTime> firstCandleDateTimeByFigi;
 
     @Value("${candle.history.duration}")
     private Duration historyDuration;
@@ -136,8 +140,19 @@ public class CandleHistoryService {
         log.info("Loaded to load history for {} days", days);
     }
 
+    public OffsetDateTime getFirstCandlDateTime(String figi) {
+        var firstCandleDateTime = firstCandleDateTimeByFigi.get(figi);
+        if (firstCandleDateTime == null) {
+            var firstCandle = candleRepository.findByFigiAndIntervalOrderByDateTime(figi, "1min").get(0);
+            firstCandleDateTime = firstCandle.getDateTime();
+            firstCandleDateTimeByFigi.put(figi, firstCandleDateTime);
+        }
+        return firstCandleDateTime;
+    }
+
     @PostConstruct
     void init() {
+        firstCandleDateTimeByFigi = new ConcurrentHashMap<>();
         requestCandlesHistoryForDays(historyDuration.toDays());
     }
 }
