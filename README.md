@@ -150,7 +150,7 @@ candle.history.duration: Период потока исторических св
 При сборке в github docker образы публикуются в https://hub.docker.com/repository/docker/romanew/invest.
 Экземпляр приложения разворачивается на сервере http://invest.struchev.site.
 
-На данный момент торгуются несколько стратегий, подробнее можно ознакомиться на http://invest.struchev.site
+На данный момент торгуются несколько стратегий, которые обгоняют рынок, подробнее можно ознакомиться на http://invest.struchev.site
 
 # Мониторинг приложения
 Подключены Spring Actuator и JavaMelody. По умолчанию доступны:

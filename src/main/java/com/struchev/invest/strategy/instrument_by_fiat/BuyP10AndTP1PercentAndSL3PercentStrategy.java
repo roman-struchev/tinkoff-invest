@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
+public class BuyP10AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
 
     private Map FIGIES = Map.of(
-            "BBG004730JJ5", 10,    // Московская биржа
-            "BBG00PNN7C40", 1      // Dynatrace
+            "BBG004S683W7", 10,   // Аэрофлот
+            "BBG00178PGX3", 1     // VK
     );
 
     public Map<String, Integer> getFigies() {
@@ -18,7 +18,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
     @Override
     public AInstrumentByFiatStrategy.BuyCriteria getBuyCriteria() {
-        return AInstrumentByFiatStrategy.BuyCriteria.builder().lessThenPercentile(40).build();
+        return AInstrumentByFiatStrategy.BuyCriteria.builder().lessThenPercentile(10).build();
     }
 
     @Override
