@@ -43,7 +43,7 @@ public class InstrumentService {
     @PostConstruct
     @Retryable
     private void init() {
-        // load all instruments and save instruments to memory
+        // загружаем все инструменты в память
         instrumentByFigi = new ConcurrentHashMap<>();
 
         var shares = tinkoffCommonAPI.getApi().getInstrumentsService().getAllSharesSync();

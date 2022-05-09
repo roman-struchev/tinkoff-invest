@@ -49,7 +49,7 @@ public class NotificationService {
 
     @PostConstruct
     private void init() {
-        // send message in case of any error in logs
+        // отправляем сообщение в telegram в случае level ERROR в логах
         var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         var appender = new UnsynchronizedAppenderBase() {
             @Override
@@ -65,7 +65,7 @@ public class NotificationService {
         loggerContext.getLoggerList().forEach(l -> l.addAppender(appender));
         appender.start();
 
-        // respond in telegram with chat id and message
+        // по умолчанию на любое сообщение ответим в телеграм чат отправив chatId
         if (StringUtils.isNotEmpty(telegramBotToken)) {
             this.bot = new TelegramBot(telegramBotToken);
             this.bot.setUpdatesListener(updates -> {

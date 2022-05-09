@@ -45,17 +45,17 @@ class StrategiesByCandleHistoryTests {
 
     @BeforeEach
     public void clean() {
-        // clean all existing orders in DB
+        // удаляем существующие ордеры из БД
         orderRepository.deleteAll();
         orderService.loadOrdersFromDB();
     }
 
     @Test
     void checkProfitByStrategies() {
-        // Check properties for test profile
+        // Проверяем свойства для тестов
         assertTrue("Tests are allowed with Tinkoff API emulator only (tinkoff.emulator=true)", isTinkoffEmulator);
 
-        // Emulating candle events
+        // Эмулируем поток свечей за заданный интервал (candle.history.duration)
         var days = historyDuration.toDays();
         var startDateTime = OffsetDateTime.now().minusDays(days);
         strategySelector.getFigiesForActiveStrategies().stream()
@@ -63,7 +63,7 @@ class StrategiesByCandleHistoryTests {
                 .sorted(Comparator.comparing(CandleDomainEntity::getDateTime))
                 .forEach(c -> purchaseService.observeNewCandle(c));
 
-        // Print reports
+        // Логируем отчеты
         reportService.logReportInstrumentByFiat(reportService.buildReportInstrumentByFiat());
         reportService.logReportInstrumentByInstrument(reportService.buildReportInstrumentByInstrument());
         assert true;

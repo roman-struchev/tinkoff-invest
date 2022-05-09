@@ -119,14 +119,14 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
         var profitPercent = candle.getClosingPrice().subtract(purchaseRate)
                 .multiply(BigDecimal.valueOf(100))
                 .divide(purchaseRate, 4, RoundingMode.HALF_DOWN);
-        // profit % > take profit %, profit % is positive
+        // profit % > take profit %, profit % > 0.1%
         if (sellCriteria.getTakeProfitPercent() != null
                 && profitPercent.floatValue() > sellCriteria.getTakeProfitPercent()
                 && profitPercent.floatValue() > 0.1f) {
             return true;
         }
 
-        // current price > take profit percentile, profit % is positive
+        // current price > take profit percentile, profit % > 0.1%
         if (sellCriteria.getTakeProfitPercentile() != null) {
             var valueByPercentile = calculate(candle, sellCriteria.getTakeProfitPercentile(),
                     CandleDomainEntity::getHighestPrice, strategy.getHistoryDuration());

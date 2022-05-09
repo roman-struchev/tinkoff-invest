@@ -20,11 +20,9 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -140,6 +138,7 @@ public class CandleHistoryService {
      * @param days
      * @return
      */
+    @SneakyThrows
     public void requestCandlesHistoryForDays(long days) {
         if (days == 0) {
             return;
@@ -152,10 +151,11 @@ public class CandleHistoryService {
             LongStream.range(0, days).forEach(i -> {
                 log.info("Request candles {}, {} day", figi, i);
                 var candles = requestCandles(figi, now.minusDays(i + 1), now.minusDays(i), CandleInterval.CANDLE_INTERVAL_1_MIN, 12);
-            candles.forEach(c -> addOrReplaceCandles(c, figi));
+                log.info("Save candles to DB {}, {} day", figi, i);
+                candles.forEach(c -> addOrReplaceCandles(c, figi));
+                log.info("Candles was saved to DB {}, {} day", figi, i);
             });
         });
-
         log.info("Loaded to load history for {} days", days);
     }
 

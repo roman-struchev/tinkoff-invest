@@ -28,7 +28,7 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
     private final Map<String, BigDecimal> currentPrices = new ConcurrentHashMap<>();
 
     /**
-     * Будет куплен инструмент, у которого цена упала больше, чем у остальных из стратегии с момента последней покупки
+     * Будет куплен инструмент, у которого цена изменилась на меньший процент, чем у остальных из стратегии с момента последней покупки
      *
      * @param strategy
      * @param candle
@@ -37,18 +37,18 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
     public boolean isShouldBuy(AInstrumentByInstrumentStrategy strategy, CandleDomainEntity candle) {
         currentPrices.put(candle.getFigi(), candle.getClosingPrice());
 
-        // we have no rates for all figies
+        // еще нет стоимости в памяти по всем инструментам
         if (!strategy.getFigies().keySet().stream().allMatch(figi -> currentPrices.get(figi) != null)) {
             return false;
         }
 
         var lastOrder = orderService.findLastByFigiAndStrategy(null, strategy);
         if (lastOrder == null) {
-            // buy any if not orders before
+            // если нет открытого ордера в рамках стратегии, то покупаем любой инструмент
             return true;
         }
 
-        // buy if change % for current figi less then for others (dropped greater than others)
+        // покупаем, если цена данного инструмента изменилась на меньший процент, чем у остальных из стратегии с момента последней покупки
         var changePercents = lastOrder.getDetails().getCurrentPrices().entrySet().stream()
                 .filter(e -> strategy.getFigies().containsKey(e.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
