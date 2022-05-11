@@ -8,7 +8,7 @@ import java.util.Map;
 public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
 
     private Map FIGIES = Map.of(
-            "BBG0013HRTL0", 6000, // CNY
+            "BBG0013HRTL0", 7000, // CNY
             "BBG0013HJJ31", 1000 // EUR
     );
 
