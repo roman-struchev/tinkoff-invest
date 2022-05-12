@@ -8,8 +8,7 @@ import java.util.Map;
 public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
 
     private Map FIGIES = Map.of(
-            "BBG004730JJ5", 10,    // Московская биржа
-            "BBG008NMBXN8", 1      // Robinhood
+            "BBG004730JJ5", 10    // Московская биржа
     );
 
     public Map<String, Integer> getFigies() {
