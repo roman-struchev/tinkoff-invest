@@ -9,7 +9,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
     private Map FIGIES = Map.of(
             "BBG004730JJ5", 10,    // Московская биржа
-            "BBG00PNN7C40", 1      // Dynatrace
+            "BBG008NMBXN8", 1      // Robinhood
     );
 
     public Map<String, Integer> getFigies() {
