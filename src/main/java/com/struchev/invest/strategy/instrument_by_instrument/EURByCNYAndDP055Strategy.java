@@ -23,7 +23,7 @@ public class EURByCNYAndDP055Strategy extends AInstrumentByInstrumentStrategy {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 }
 
