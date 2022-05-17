@@ -43,18 +43,17 @@ public class ReportService {
     private String reportInstrumentByFiatSql;
 
     public List<StrategyInfoReportRow> buildReportStrategiesInfo() {
-        return strategySelector.getActiveStrategies().stream()
-                .map(s -> {
-                   return StrategyInfoReportRow.builder()
-                           .name(s.getName())
-                           .type(s.getType().getTitle())
-                           .figies(s.getFigies().entrySet().stream().collect(Collectors.toMap(e -> instrumentService.getInstrument(e.getKey()).getName(), e-> e.getValue())))
-                           .buyCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getBuyCriteria() : null)
-                           .sellCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getSellCriteria(): null)
-                           .history(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getHistoryDuration(): null)
-                           .dropPercent(s instanceof AInstrumentByInstrumentStrategy ? ((AInstrumentByInstrumentStrategy) s).getMinimalDropPercent(): null)
-                           .build();
-                })
+        return strategySelector.getAllStrategies().stream()
+                .map(s -> StrategyInfoReportRow.builder()
+                        .isEnabled(s.isEnabled())
+                        .name(s.getName())
+                        .type(s.getType().getTitle())
+                        .figies(s.getFigies().entrySet().stream().collect(Collectors.toMap(e -> instrumentService.getInstrument(e.getKey()).getName(), e -> e.getValue())))
+                        .buyCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getBuyCriteria() : null)
+                        .sellCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getSellCriteria() : null)
+                        .history(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getHistoryDuration() : null)
+                        .dropPercent(s instanceof AInstrumentByInstrumentStrategy ? ((AInstrumentByInstrumentStrategy) s).getMinimalDropPercent() : null)
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -102,7 +101,7 @@ public class ReportService {
                         var order = ordersByStrategy.get(i);
                         var nextOrder = ordersByStrategy.get(i + 1);
                         lastAmount = lastAmount * (order.getSellPrice().doubleValue()) / nextOrder.getPurchasePrice().doubleValue();
-                        if(nextOrder.getFigiTitle().equals(initFigiTitle)) {
+                        if (nextOrder.getFigiTitle().equals(initFigiTitle)) {
                             // результат нужно показать в изначальном инструменте, но конвертировать нельзя, т.к. стоимость их не равнозначна
                             lastAmountInInitFigi = lastAmount;
                         }

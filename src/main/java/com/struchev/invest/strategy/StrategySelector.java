@@ -1,5 +1,6 @@
 package com.struchev.invest.strategy;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class StrategySelector {
+    @Getter
     private final List<AStrategy> allStrategies;
     private List<AStrategy> activeStrategies;
 

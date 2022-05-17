@@ -6,6 +6,7 @@
     <div class="card mt-3" th:each="s: ${reportStrategiesInfo}">
         <div class="card-header">
             <b><span th:text="${s.name}"/></b> (<span th:text="${s.type}"/>)
+            <b><span class="float-end" th:if="${!s.isEnabled}">не активна</span></b>
         </div>
         <div class="card-body">
             <table class="table table-sm">
@@ -23,13 +24,13 @@
                 <tr th:if="${s.sellCriteria != null}">
                     <td>Критерии продажи</td>
                     <td>
-                        <div th:if="${s.sellCriteria.takeProfitPercentile}">
+                        <div th:if="${s.sellCriteria.takeProfitPercent}">
                             Прибыть: <span th:text="${s.sellCriteria.takeProfitPercent}"/> %
                         </div>
                         <div th:if="${s.sellCriteria.stopLossPercent}">Убыток: <span
                                 th:text="${s.sellCriteria.stopLossPercent}"/>%
                         </div>
-                        <div th:if="${s.sellCriteria.takeProfitPercent}">
+                        <div th:if="${s.sellCriteria.takeProfitPercentile}">
                             Рост, перцентиль: <span th:text="${s.sellCriteria.takeProfitPercentile}"/></div>
                         <div th:if="${s.sellCriteria.stopLossPercentile}">
                             Падение, перцентиль: <span th:text="${s.sellCriteria.stopLossPercentile}"/></div>

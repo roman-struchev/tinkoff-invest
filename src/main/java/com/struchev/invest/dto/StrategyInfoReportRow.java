@@ -14,6 +14,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class StrategyInfoReportRow {
+    private boolean isEnabled;
     private String name;
     private Map<String, Integer> figies;
     private String type;
