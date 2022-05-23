@@ -44,6 +44,12 @@ public class StrategySelector {
     private void init() {
         activeStrategies = allStrategies.stream()
                 .filter(s -> s.isEnabled())
+                .peek(s -> {
+                    if (s.getType() == AStrategy.Type.instrumentByInstrument && s.getFigies().size() < 2
+                            || s.getType() == AStrategy.Type.instrumentByFiat && s.getFigies().size() < 1) {
+                        throw new RuntimeException("Incorrect count of figies in " + s.getName());
+                    }
+                })
                 .peek(s -> log.info("Enabled strategy: {}: {}", s.getName(), s.getFigies().keySet()))
                 .collect(Collectors.toList());
     }
