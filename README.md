@@ -94,7 +94,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 ```
 ##### Атрибуты стратегии
 - `AInstrumentByFiatStrategy.getFigies` - список FIGI (инструментов) и количество бумаг, которые используются в стратегии (минимум 1 инструмент)
-- `AInstrumentByFiatStrategy.getHistoryDuration` - период истории котировок, для расчета процента (перцентиля) по текущей цене относительно истории (по умолчанию 7 дней)
+- `AInstrumentByFiatStrategy.getHistoryDuration` - период истории свечей, для расчета процента (перцентиля) по текущей цене относительно истории (по умолчанию 7 дней)
 - `AInstrumentByFiatStrategy.getBuyCriteria().lessThenPercentile` - процент (перцентиль), если цена за указанный период падает ниже него, покупаем
 - `AInstrumentByFiatStrategy.getSellCriteria().takeProfitPercent` - процент (take profit), если цена покупки растет на него, продаем
 - `AInstrumentByFiatStrategy.getSellCriteria().takeProfitPercentile` - процент (take profit, перцентиль), если цена за указанный период растет выше него, продаем
@@ -107,7 +107,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 - tests: [src/test/java/com/struchev/invest/strategy/instrument_by_fiat](src/test/java/com/struchev/invest/strategy/instrument_by_fiat)
 
 # Проверка стратегий по историческим данным
-Приложение загрузит историю, эмулирует поток свечей и ордеры в рамках прописанных стратегий. 
+Приложение загружает историю, эмулирует поток свечей и ордеры в рамках прописанных стратегий. 
 Работа возможна с live или sandbox токенами Tinkoff invest GRPC API.
 
 ##### Свойства

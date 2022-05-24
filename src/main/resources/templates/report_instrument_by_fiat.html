@@ -22,7 +22,7 @@
         <tr th:each="r: ${reportInstrumentByFiat}">
             <td th:text="${r.figiTitle}"/>
             <td th:text="${r.strategy}"/>
-            <td th:text="${#numbers.formatDecimal(r.profitByRobot, 1, 2, 'DEFAULT')}"/>
+            <td th:classappend="${r.profitByRobot >= r.profitByInvest} ? text-success" th:text="${#numbers.formatDecimal(r.profitByRobot, 1, 2, 'DEFAULT')}"/>
             <td th:text="${#numbers.formatDecimal(r.profitByInvest, 1, 2, 'DEFAULT')}"/>
             <td th:text="${r.orders}"/>
             <td th:text="${#numbers.formatDecimal(r.firstPrice, 1, 2, 'DEFAULT')}"/>

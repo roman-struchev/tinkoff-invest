@@ -25,7 +25,7 @@
             <td th:text="${{r.initDate}}"/>
             <td th:text="${#numbers.formatDecimal(r.initAmount, 1, 2, 'DEFAULT') + ' ' + r.initFigiTitle}"/>
             <td th:text="${#numbers.formatDecimal(r.lastAmount, 1, 2, 'DEFAULT') + ' ' + r.lastFigiTitle}"/>
-            <td th:text="${#numbers.formatDecimal(r.percent, 1, 2, 'DEFAULT')}"/>
+            <td th:classappend="${r.percent >= 0} ? text-success" th:text="${#numbers.formatDecimal(r.percent, 1, 2, 'DEFAULT')}"/>
             <td th:text="${r.orders}"/>
             <td th:text="${#numbers.formatDecimal(r.commission, 1, 2, 'DEFAULT') + ' RUB'}"/>
             <td th:text="${r.duration.toDays()}"/>
