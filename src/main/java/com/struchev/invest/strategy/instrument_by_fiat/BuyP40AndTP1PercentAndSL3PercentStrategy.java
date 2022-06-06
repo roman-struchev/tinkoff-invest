@@ -28,6 +28,6 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 }
