@@ -1,5 +1,5 @@
 # Торговый робот для Тинкофф Инвестиций
-Разработан в рамках [Tinkoff Invest Robot Contest](https://github.com/Tinkoff/invest-robot-contest) (x-app-name `roman-struchev`)
+🥇 The winner in [Tinkoff Invest Robot Contest](https://github.com/Tinkoff/invest-robot-contest)
 
 # Конфигурация
 ##### Tinkoff invest API 
