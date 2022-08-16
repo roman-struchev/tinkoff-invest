@@ -55,11 +55,10 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
                     var figi = e.getKey();
                     var priceWhenBuy = e.getValue();
                     var priceCurrent = currentPrices.get(figi);
-                    var rate = (priceCurrent.doubleValue() - priceWhenBuy.doubleValue()) / priceWhenBuy.doubleValue() * 100;
-                    return rate;
+                    return (priceCurrent.doubleValue() - priceWhenBuy.doubleValue()) / priceWhenBuy.doubleValue() * 100;
                 }));
         var changePercentMin = changePercents.entrySet().stream()
-                .reduce((v1, v2) -> v1.getValue() < v2.getValue() ? v1 : v2).orElse(null);
+                .reduce((v1, v2) -> v1.getValue() < v2.getValue() ? v1 : v2).orElseThrow();
         return changePercentMin.getKey().equals(candle.getFigi());
     }
 
@@ -92,19 +91,15 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
                     var figi = e.getKey();
                     var priceWhenBuy = e.getValue();
                     var priceCurrent = currentPrices.get(figi);
-                    var rate = (priceCurrent.doubleValue() - priceWhenBuy.doubleValue()) / priceWhenBuy.doubleValue() * 100;
-                    return rate;
+                    return (priceCurrent.doubleValue() - priceWhenBuy.doubleValue()) / priceWhenBuy.doubleValue() * 100;
                 }));
         var changePercentForCurrentFigi = changePercents.get(candle.getFigi());
         var changePercentMin = changePercents.entrySet().stream()
-                .reduce((v1, v2) -> v1.getValue() < v2.getValue() ? v1 : v2).orElse(null);
+                .reduce((v1, v2) -> v1.getValue() < v2.getValue() ? v1 : v2).orElseThrow();
 
         // Нужно чтобы цена одного из инструментов упала (в процентах) относительно цены покупки текущего инструмента на сколько-то
         // Тогда будет выгодно продать текущую и купить другую (по рыночной цене, если будут заявки в стакане и перекроем комиссию)
-        if (changePercentForCurrentFigi - changePercentMin.getValue() > strategy.getMinimalDropPercent()) {
-            return true;
-        }
-        return false;
+        return changePercentForCurrentFigi - changePercentMin.getValue() > strategy.getMinimalDropPercent();
     }
 
     @Override

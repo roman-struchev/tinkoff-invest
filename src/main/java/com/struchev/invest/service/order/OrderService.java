@@ -57,7 +57,7 @@ public class OrderService {
         if (currentPrices != null) {
             currentPrices = currentPrices.entrySet().stream()
                     .filter(e -> strategy.getFigies().containsKey(e.getKey()))
-                    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
         var instrument = instrumentService.getInstrument(candle.getFigi());
         var order = OrderDomainEntity.builder()

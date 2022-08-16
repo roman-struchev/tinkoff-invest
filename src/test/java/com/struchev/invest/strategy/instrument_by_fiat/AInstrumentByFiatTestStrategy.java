@@ -4,7 +4,7 @@ import java.util.Map;
 
 public abstract class AInstrumentByFiatTestStrategy extends AInstrumentByFiatStrategy {
 
-    private Map FIGIES = Map.of(
+    private static final Map FIGIES = Map.of(
 //            "BBG004730N88", 10,    // SBER
             "BBG006L8G4H1", 1,    //Yandex
 //            "BBG004S683W7", 10, //Аэрофлот

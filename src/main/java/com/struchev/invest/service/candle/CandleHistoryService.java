@@ -44,8 +44,8 @@ public class CandleHistoryService {
 
     @Value("${candle.history.duration}")
     private Duration historyDuration;
-    @Value("${candle.listener.enabled}")
-    Boolean isCandleListenerEnabled;
+    @Value("${candle.listener.enabled:false}")
+    private Boolean isCandleListenerEnabled;
 
     @Transactional
     public CandleDomainEntity addOrReplaceCandles(HistoricCandle newCandle, String figi) {
@@ -94,19 +94,15 @@ public class CandleHistoryService {
         // если слушатель выключен - значит запускаем не в продакшн режиме, можем хранить свечки в памяти, а не на диске (БД)
         if (!isCandleListenerEnabled) {
             var candlesByFigi = candlesLocalCache.get(figi);
-            if (candlesByFigi.size() == 0) {
-                throw new RuntimeException("Candles not found in local cache for " + figi);
+            if (candlesByFigi.isEmpty()) {
+                throw new UnsupportedOperationException("Candles not found in local cache for " + figi);
             }
-            var candles = candlesByFigi.stream()
+            return candlesByFigi.stream()
                     .filter(c -> c.getDateTime().isAfter(startDateTime))
                     .filter(c -> c.getDateTime().isBefore(endDateTime) || c.getDateTime().isEqual(endDateTime))
                     .collect(Collectors.toList());
-            return candles;
         }
-
-        var candles = candleRepository.findByFigiAndIntervalAndBetweenDateTimes(figi,
-                "1min", startDateTime, endDateTime);
-        return candles;
+        return candleRepository.findByFigiAndIntervalAndBetweenDateTimes(figi, "1min", startDateTime, endDateTime);
     }
 
     /**
@@ -122,13 +118,12 @@ public class CandleHistoryService {
     @SneakyThrows
     private List<HistoricCandle> requestCandles(String figi, OffsetDateTime start, OffsetDateTime end, CandleInterval resolution, int tries) {
         try {
-            var candles = tinkoffCommonAPI.getApi().getMarketDataService().getCandles(figi,
-                    start.toInstant(), end.toInstant(), resolution).get();
-            return candles;
+            return tinkoffCommonAPI.getApi().getMarketDataService().getCandles(figi, start.toInstant(),
+                    end.toInstant(), resolution).get();
         } catch (Exception e) {
             log.error("Can't get candles for figi {}", e);
             Thread.sleep(10000);
-            return requestCandles(figi, start, end, resolution, tries--);
+            return requestCandles(figi, start, end, resolution, tries - 1);
         }
     }
 
@@ -147,26 +142,23 @@ public class CandleHistoryService {
         var now = OffsetDateTime.now();
         var figies = strategySelector.getFigiesForActiveStrategies();
         log.info("Start to load history {} days, for figies {}", days, figies);
-        figies.stream().forEach(figi -> {
-            LongStream.range(0, days).forEach(i -> {
-                log.info("Request candles {}, {} day", figi, i);
-                var candles = requestCandles(figi, now.minusDays(i + 1), now.minusDays(i), CandleInterval.CANDLE_INTERVAL_1_MIN, 12);
-                log.info("Save candles to DB {}, {} day", figi, i);
-                candles.forEach(c -> addOrReplaceCandles(c, figi));
-                log.info("Candles was saved to DB {}, {} day", figi, i);
-            });
-        });
+        figies.stream().forEach(figi ->
+                LongStream.range(0, days).forEach(i -> {
+                    log.info("Request candles {}, {} day", figi, i);
+                    var candles = requestCandles(figi, now.minusDays(i + 1), now.minusDays(i), CandleInterval.CANDLE_INTERVAL_1_MIN, 12);
+                    log.info("Save candles to DB {}, {} day", figi, i);
+                    candles.forEach(c -> addOrReplaceCandles(c, figi));
+                    log.info("Candles was saved to DB {}, {} day", figi, i);
+                })
+        );
         log.info("Loaded to load history for {} days", days);
     }
 
     public OffsetDateTime getFirstCandleDateTime(String figi) {
-        var firstCandleDateTime = firstCandleDateTimeByFigi.get(figi);
-        if (firstCandleDateTime == null) {
-            var firstCandle = candleRepository.findByFigiAndIntervalOrderByDateTime(figi, "1min").get(0);
-            firstCandleDateTime = firstCandle.getDateTime();
-            firstCandleDateTimeByFigi.put(figi, firstCandleDateTime);
-        }
-        return firstCandleDateTime;
+        return firstCandleDateTimeByFigi.computeIfAbsent(figi, f -> {
+            var firstCandle = candleRepository.findByFigiAndIntervalOrderByDateTime(f, "1min").get(0);
+            return firstCandle.getDateTime();
+        });
     }
 
     @PostConstruct
