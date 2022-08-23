@@ -58,7 +58,7 @@ public class PurchaseService {
                 if (isShouldBuy) {
                     if (strategy.getType() == AStrategy.Type.instrumentByFiat && strategy.getDelayBySL() != null) {
                         var finishedOrders = orderService.findClosedByFigiAndStrategy(candleDomainEntity.getFigi(), strategy);
-                        if (finishedOrders.size() > 0) {
+                        if (finishedOrders.isEmpty()) {
                             var lastOrder = finishedOrders.get(finishedOrders.size() - 1);
                             if (ChronoUnit.SECONDS.between(lastOrder.getSellDateTime(), candleDomainEntity.getDateTime()) < strategy.getDelayBySL().getSeconds()) {
                                 return;

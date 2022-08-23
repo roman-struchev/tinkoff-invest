@@ -2,7 +2,6 @@ package com.struchev.invest.service.tinkoff;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StringUtils;
 import ru.tinkoff.piapi.contract.v1.AccountType;
 import ru.tinkoff.piapi.core.InvestApi;
 
@@ -48,7 +47,7 @@ public abstract class ATinkoffAPI implements ITinkoffCommonAPI, ITinkoffOrderAPI
         accounts.forEach(a -> log.info("Account id {}, name {}", a.getId(), a.getName()));
         var account = accounts.stream()
                 .filter(a -> a.getType() == AccountType.ACCOUNT_TYPE_TINKOFF)
-                .filter(a -> StringUtils.isEmpty(accountId) || accountId.equals(a.getId()))
+                .filter(a -> accountId == null || accountId.isEmpty() || accountId.equals(a.getId()))
                 .findFirst().orElseThrow(() -> new RuntimeException("Account was not found for token " + token));
         log.info("Will use Account id {}, name {}", account.getId(), account.getName());
         accountId = account.getId();

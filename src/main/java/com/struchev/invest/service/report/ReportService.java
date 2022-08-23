@@ -26,6 +26,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +49,7 @@ public class ReportService {
                         .isEnabled(s.isEnabled())
                         .name(s.getName())
                         .type(s.getType().getTitle())
-                        .figies(s.getFigies().entrySet().stream().collect(Collectors.toMap(e -> instrumentService.getInstrument(e.getKey()).getName(), e -> e.getValue())))
+                        .figies(s.getFigies().entrySet().stream().collect(Collectors.toMap(e -> instrumentService.getInstrument(e.getKey()).getName(), Map.Entry::getValue)))
                         .buyCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getBuyCriteria() : null)
                         .sellCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getSellCriteria() : null)
                         .history(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getHistoryDuration() : null)
@@ -65,7 +66,7 @@ public class ReportService {
     // FIXME in lots should be result value, for example 1000 instead of 1 (to fix issue fix crr diff strategies)
     public List<OrderReportInstrumentByFiatRow> buildReportInstrumentByFiat() {
         var query = entityManager.createNativeQuery(reportInstrumentByFiatSql);
-        var rows = ((List<Object[]>) query.getResultList()).stream()
+        return ((List<Object[]>) query.getResultList()).stream()
                 .filter(r -> strategySelector.getStrategyType(String.valueOf(r[1]), null) == AStrategy.Type.instrumentByFiat)
                 .map(r -> OrderReportInstrumentByFiatRow.builder()
                         .figiTitle(String.valueOf(r[0]))
@@ -78,21 +79,20 @@ public class ReportService {
                         .build()
                 )
                 .collect(Collectors.toList());
-        return rows;
     }
 
     public List<OrderReportInstrumentByInstrumentRow> buildReportInstrumentByInstrument() {
         var orders = orderRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        var strategies = orders.stream().map(s -> s.getStrategy()).collect(Collectors.toSet());
-        var rows = strategies.stream()
+        var strategies = orders.stream().map(OrderDomainEntity::getStrategy).collect(Collectors.toSet());
+        return strategies.stream()
                 .filter(strategy -> strategySelector.getStrategyType(strategy, null) == AStrategy.Type.instrumentByInstrument)
                 .map(strategy -> {
                     var ordersByStrategy = orders.stream()
                             .filter(o -> o.getStrategy().equals(strategy))
                             .collect(Collectors.toList());
                     var initDate = ordersByStrategy.get(0).getPurchaseDateTime();
-                    var initAmount = ordersByStrategy.size() == 0 ? 0 : ordersByStrategy.get(0).getLots();
-                    var initFigiTitle = ordersByStrategy.size() == 0 ? null : ordersByStrategy.get(0).getFigiTitle();
+                    var initAmount = ordersByStrategy.isEmpty() ? 0 : ordersByStrategy.get(0).getLots();
+                    var initFigiTitle = ordersByStrategy.isEmpty() ? null : ordersByStrategy.get(0).getFigiTitle();
                     var lastAmount = (double) initAmount;
                     var lastAmountInInitFigi = (double) initAmount;
                     var lastDate = initDate;
@@ -114,18 +114,17 @@ public class ReportService {
                             .initDate(initDate)
                             .initAmount(new BigDecimal(initAmount).setScale(2, RoundingMode.HALF_UP))
                             .initFigiTitle(initFigiTitle)
-                            .lastAmount(new BigDecimal(lastAmountInInitFigi).setScale(2, RoundingMode.HALF_UP))
+                            .lastAmount(BigDecimal.valueOf(lastAmountInInitFigi).setScale(2, RoundingMode.HALF_UP))
                             .lastFigiTitle(initFigiTitle)
                             .strategy(strategy)
                             .orders(ordersByStrategy.size())
                             .commission(commission.setScale(2, RoundingMode.HALF_UP))
-                            .percent(new BigDecimal(percent).setScale(2, RoundingMode.HALF_UP))
+                            .percent(BigDecimal.valueOf(percent).setScale(2, RoundingMode.HALF_UP))
                             .duration(Duration.between(initDate, lastDate))
                             .build();
                 })
                 .sorted(Comparator.comparing(OrderReportInstrumentByInstrumentRow::getPercent))
                 .collect(Collectors.toList());
-        return rows;
     }
 
     public void logReportInstrumentByFiat(List<OrderReportInstrumentByFiatRow> rows) {

@@ -30,6 +30,6 @@ public class CalculatorFacade {
 
     @PostConstruct
     private void init() {
-        calculateServiceByType = calculateServices.stream().collect(Collectors.toMap(c -> c.getStrategyType(), c -> c));
+        calculateServiceByType = calculateServices.stream().collect(Collectors.toMap(ICalculatorService::getStrategyType, c -> c));
     }
 }

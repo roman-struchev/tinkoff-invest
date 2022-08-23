@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -27,10 +26,8 @@ import java.time.OffsetDateTime;
                 @Index(columnList = "strategy"),
                 @Index(columnList = "currency")
         })
-@TypeDefs({
-        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
-        @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
-})
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 public class OrderDomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -35,7 +35,7 @@ USD дорожает относительно RUB в течении дня, EUR 
 ```java
 public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
 
-    private Map FIGIES = Map.of(
+    private static final Map FIGIES = Map.of(
             "BBG0013HRTL0", 6000, // CNY
             "BBG0013HJJ31", 1000 // EUR
     );
@@ -68,7 +68,7 @@ public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
 @Component
 public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
 
-    private Map FIGIES = Map.of(
+    private static final Map FIGIES = Map.of(
             "BBG008NMBXN8", 1    // Robinhood
     );
 

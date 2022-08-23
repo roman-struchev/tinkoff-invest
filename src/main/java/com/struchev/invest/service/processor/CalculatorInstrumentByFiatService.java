@@ -56,7 +56,7 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
                                  Duration duration) {
         // недостаточно данных за промежуток (первая свечка пришла позже начала интервала) - не калькулируем
         var firstCandleDateTime = candleHistoryService.getFirstCandleDateTime(figi);
-        if(currentDateTime.minus(duration).isBefore(firstCandleDateTime)) {
+        if (currentDateTime.minus(duration).isBefore(firstCandleDateTime)) {
             return null;
         }
 
@@ -65,11 +65,9 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
                 startDateTime, currentDateTime);
 
         // недостаточно данных за промежуток (мало свечек) - не калькулируем
-        if (Duration.ofMinutes(30).compareTo(duration) <= 0 && candleHistoryLocal.size() < 15) {
-            return null;
-        } else if (Duration.ofHours(1).compareTo(duration) <= 0 && candleHistoryLocal.size() < 30) {
-            return null;
-        } else if (Duration.ofHours(2).compareTo(duration) <= 0 && candleHistoryLocal.size() < 60) {
+        if (Duration.ofMinutes(30).compareTo(duration) <= 0 && candleHistoryLocal.size() < 15
+                || Duration.ofHours(1).compareTo(duration) <= 0 && candleHistoryLocal.size() < 30
+                || Duration.ofHours(2).compareTo(duration) <= 0 && candleHistoryLocal.size() < 60) {
             return null;
         }
 
@@ -95,10 +93,7 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
         var valueByPercentile = calculate(currentDateTime, figi, buyCriteria.getLessThenPercentile(),
                 CandleDomainEntity::getLowestPrice, strategy.getHistoryDuration());
 
-        if (valueByPercentile != null && candle.getClosingPrice().compareTo(valueByPercentile) < 0) {
-            return true;
-        }
-        return false;
+        return valueByPercentile != null && candle.getClosingPrice().compareTo(valueByPercentile) < 0;
     }
 
 
@@ -158,7 +153,7 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
         }
 
         if (countOfCriteriaToStopLoss == 0) {
-            throw new RuntimeException("No stop loss rule for " + strategy.getName());
+            throw new UnsupportedOperationException("No stop loss rule for " + strategy.getName());
         }
         return countOfCriteriaToStopLoss == countOfSuitableToStopLoss;
     }
