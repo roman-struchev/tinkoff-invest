@@ -74,8 +74,8 @@ public class ReportService {
                         .profitByRobot(r[2] == null ? BigDecimal.ZERO : new BigDecimal(String.valueOf(r[2])).setScale(2, RoundingMode.HALF_UP))
                         .profitByInvest(new BigDecimal(String.valueOf(r[3])))
                         .orders(Integer.valueOf(String.valueOf(r[4])))
-                        .firstPrice(new BigDecimal(String.valueOf(r[5])).setScale(2, RoundingMode.HALF_UP))
-                        .lastPrice(new BigDecimal(String.valueOf(r[6])).setScale(2, RoundingMode.HALF_UP))
+                        .firstPrice(new BigDecimal(String.valueOf(r[5])).setScale(4, RoundingMode.HALF_UP))
+                        .lastPrice(new BigDecimal(String.valueOf(r[6])).setScale(4, RoundingMode.HALF_UP))
                         .build()
                 )
                 .collect(Collectors.toList());

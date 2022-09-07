@@ -34,15 +34,15 @@ public class TinkoffGRPCAPI extends ATinkoffAPI {
             var result = getApi().getSandboxService().postOrderSync(instrument.getFigi(), quantity, quotation,
                     OrderDirection.ORDER_DIRECTION_BUY, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
-                    .commission(toBigDecimal(result.getInitialCommission(), 2))
-                    .price(toBigDecimal(result.getExecutedOrderPrice(), 2, price))
+                    .commission(toBigDecimal(result.getInitialCommission(), 8))
+                    .price(toBigDecimal(result.getExecutedOrderPrice(), 4, price))
                     .build();
         } else {
             var result = getApi().getOrdersService().postOrderSync(instrument.getFigi(), quantity, quotation,
                     OrderDirection.ORDER_DIRECTION_BUY, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
-                    .commission(toBigDecimal(result.getInitialCommission(), 2))
-                    .price(toBigDecimal(result.getExecutedOrderPrice(), 2, price))
+                    .commission(toBigDecimal(result.getInitialCommission(), 8))
+                    .price(toBigDecimal(result.getExecutedOrderPrice(), 4, price))
                     .build();
         }
     }
@@ -61,15 +61,15 @@ public class TinkoffGRPCAPI extends ATinkoffAPI {
             var result = getApi().getSandboxService().postOrderSync(instrument.getFigi(), quantity, quotation,
                     OrderDirection.ORDER_DIRECTION_SELL, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
-                    .commission(toBigDecimal(result.getInitialCommission(), 2))
-                    .price(toBigDecimal(result.getExecutedOrderPrice(), 2, price))
+                    .commission(toBigDecimal(result.getInitialCommission(), 8))
+                    .price(toBigDecimal(result.getExecutedOrderPrice(), 4, price))
                     .build();
         } else {
             var result = getApi().getOrdersService().postOrderSync(instrument.getFigi(), quantity, quotation,
                     OrderDirection.ORDER_DIRECTION_SELL, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
-                    .commission(toBigDecimal(result.getInitialCommission(), 2))
-                    .price(toBigDecimal(result.getExecutedOrderPrice(), 2, price))
+                    .commission(toBigDecimal(result.getInitialCommission(), 8))
+                    .price(toBigDecimal(result.getExecutedOrderPrice(), 4, price))
                     .build();
         }
     }
