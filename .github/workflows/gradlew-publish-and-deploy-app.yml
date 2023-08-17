@@ -8,15 +8,15 @@ jobs:
   publish-app:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: romanew/invest:latest
-        username: ${{ secrets.DOCKER_PUBLISH_REGISTRY_USERNAME }}
-        password: ${{ secrets.DOCKER_PUBLISH_REGISTRY_PASSWORD }}
-        dockerfile: Dockerfile.App
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: romanew/invest:latest
+          username: ${{ secrets.DOCKER_PUBLISH_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_PUBLISH_REGISTRY_PASSWORD }}
+          dockerfile: Dockerfile.App
 
   deploy-app:
     needs: publish-app
@@ -29,16 +29,16 @@ jobs:
         with:
           local: docker-compose-app-live.yml
           remote: ./invest/docker-compose-app-live.yml
-          host: 193.17.92.2
+          host: 31.186.136.15
           username: root
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY_ZTV }}
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
 
       - name: Start using docker-compose
         uses: appleboy/ssh-action@master
         with:
-          host: 193.17.92.2
+          host: 31.186.136.15
           username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY_ZTV }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
           script: |
             cd invest
             export TINKOFF_TOKEN=${{ secrets.TINKOFF_TOKEN }}
@@ -46,7 +46,7 @@ jobs:
             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             export TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
             export TELEGRAM_BOT_CHAT_ID=${{ secrets.TELEGRAM_BOT_CHAT_ID }}
-            docker-compose -f docker-compose-image-app.yml down
-            docker-compose -f docker-compose-image-app.yml pull
-            docker-compose -f docker-compose-image-app.yml up -d
+            docker-compose -f docker-compose-app-live.yml down
+            docker-compose -f docker-compose-app-live.yml pull
+            docker-compose -f docker-compose-app-live.yml up -d
 
