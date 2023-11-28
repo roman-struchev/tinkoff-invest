@@ -49,4 +49,3 @@ jobs:
             docker-compose -f docker-compose-app-live.yml down
             docker-compose -f docker-compose-app-live.yml pull
             docker-compose -f docker-compose-app-live.yml up -d
-
