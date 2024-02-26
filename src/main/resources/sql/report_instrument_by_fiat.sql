@@ -1,10 +1,10 @@
-select a.figi_title                                                   figi,
-       a.strategy                                                     strategy,
-       round(100 * a.total / (a.first_price * a.lots), 2)             profit_by_robot,
-       round(100 * (a.last_price - a.first_price) / a.first_price, 2) profit_by_invest,
-       a.offers                                                       offers,
-       a.first_price                                                  first_price,
-       a.last_price                                                   last_price
+select a.figi_title                                                                      figi,
+       a.strategy                                                                        strategy,
+       round(CAST((100 * a.total / (a.first_price * a.lots)) as numeric), 2)             profit_by_robot,
+       round(CAST((100 * (a.last_price - a.first_price) / a.first_price) as numeric), 2) profit_by_invest,
+       a.offers                                                                          offers,
+       a.first_price                                                                     first_price,
+       a.last_price                                                                      last_price
 from (select o.figi_title,
              o.strategy,
              o.lots,
