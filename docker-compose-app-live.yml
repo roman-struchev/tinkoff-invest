@@ -14,8 +14,8 @@ services:
       - tinkoff.is-token-sandbox=false
       - tinkoff.token=${TINKOFF_TOKEN}
       - tinkoff.account-id=2090809704
-      - telegram.bot.token=${TELEGRAM_BOT_TOKEN}
-      - telegram.bot.chat-id=${TELEGRAM_BOT_CHAT_ID}
+#      - telegram.bot.token=${TELEGRAM_BOT_TOKEN}
+#      - telegram.bot.chat-id=${TELEGRAM_BOT_CHAT_ID}
     restart: always
     deploy:
       resources:
