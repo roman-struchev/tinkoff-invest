@@ -49,7 +49,10 @@ public class ReportService {
                         .isEnabled(s.isEnabled())
                         .name(s.getName())
                         .type(s.getType().getTitle())
-                        .figies(s.getFigies().entrySet().stream().collect(Collectors.toMap(e -> instrumentService.getInstrument(e.getKey()).getName(), Map.Entry::getValue)))
+                        .figies(s.getFigies().entrySet().stream().collect(Collectors.toMap(e -> {
+                            var instrument = instrumentService.getInstrument(e.getKey());
+                            return instrument == null ? e.getKey() : instrument.getName();
+                        }, Map.Entry::getValue)))
                         .buyCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getBuyCriteria() : null)
                         .sellCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getSellCriteria() : null)
                         .history(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getHistoryDuration() : null)
