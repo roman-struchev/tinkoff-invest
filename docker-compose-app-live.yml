@@ -17,4 +17,7 @@ services:
       - telegram.bot.token=${TELEGRAM_BOT_TOKEN}
       - telegram.bot.chat-id=${TELEGRAM_BOT_CHAT_ID}
     restart: always
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          memory: 512M

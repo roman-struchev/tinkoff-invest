@@ -28,13 +28,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // retry
     implementation 'org.springframework.retry:spring-retry:1.2.5.RELEASE'
     implementation 'org.springframework:spring-aspects:5.2.8.RELEASE'
-
-//	implementation 'de.codecentric:spring-boot-admin-starter-server:2.4.1'
-//	implementation 'de.codecentric:spring-boot-admin-starter-client:2.4.1'
 
     implementation 'com.github.pengrad:java-telegram-bot-api:5.2.0'
 
@@ -44,6 +42,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.9'
+
+    // prometheus metrics
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     // tinkoff grpc lib
     implementation 'ru.tinkoff.piapi:java-sdk-core:1.0-M8'

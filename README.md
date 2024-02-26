@@ -173,11 +173,10 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
 Актуальное состояние можно посмотреть на http://invest.struchev.site
 
 # Мониторинг приложения
-Подключены Spring Actuator и JavaMelody. По умолчанию открыты адреса:
-- `/actuator/health`
+Подключены Spring Actuator и JavaMelody. По умолчанию открыты:
 - `/actuator/metrics`
+- `/actuator/prometheus`
 - `/actuator/monitoring`
-- `/actuator/logfile`
 
 # Статистика по брокерскому счету (out of scope)
 Для отображения детальной статистики по каждому из брокерских счетов разработан отдельный сервис http://tinkoff-pro.struchev.site
