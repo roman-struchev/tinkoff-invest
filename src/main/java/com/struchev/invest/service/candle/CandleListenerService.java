@@ -66,6 +66,6 @@ public class CandleListenerService {
 
     @PostConstruct
     void init() {
-        new Thread(() -> startToListen(), "event-listener").start();
+        new Thread(this::startToListen, "event-listener").start();
     }
 }

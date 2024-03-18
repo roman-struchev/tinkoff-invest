@@ -54,8 +54,7 @@ public class NotificationService {
         var appender = new UnsynchronizedAppenderBase() {
             @Override
             protected void append(Object eventObject) {
-                if (eventObject instanceof LoggingEvent) {
-                    var event = (LoggingEvent) eventObject;
+                if (eventObject instanceof LoggingEvent event) {
                     if (event.getLevel() == Level.ERROR) {
                         sendMessage(event.toString());
                     }
@@ -69,7 +68,7 @@ public class NotificationService {
         if (StringUtils.isNotEmpty(telegramBotToken)) {
             this.bot = new TelegramBot(telegramBotToken);
             this.bot.setUpdatesListener(updates -> {
-                updates.stream().forEach(update -> {
+                updates.forEach(update -> {
                     var chatId = update.message().chat().id();
                     var messageIn = update.message().text();
                     if (messageIn != null) {
@@ -82,7 +81,7 @@ public class NotificationService {
         }
 
         if (StringUtils.isEmpty(telegramBotToken) || StringUtils.isEmpty(telegramBotChatId)) {
-            log.warn("Telegram properties no defined properly: telegram.bot.token: , telegram.bot.chat-id: {}",
+            log.warn("Telegram properties no defined properly: telegram.bot.token {}, telegram.bot.chat-id {}",
                     telegramBotToken, telegramBotChatId);
         }
     }
