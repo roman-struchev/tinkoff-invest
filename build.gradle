@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.2.1'
+    id 'org.springframework.boot' version '3.2.3'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'java'
 }
@@ -29,8 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // retry
-    implementation 'org.springframework.retry:spring-retry:1.2.5.RELEASE'
-    implementation 'org.springframework:spring-aspects:5.2.8.RELEASE'
+    implementation 'org.springframework.retry:spring-retry:2.0.5'
+    implementation 'org.springframework:spring-aspects:6.1.5'
 
     // telegram
     implementation 'com.github.pengrad:java-telegram-bot-api:7.0.0'
@@ -38,7 +38,7 @@ dependencies {
     // client TODO NOW - check where is used
     implementation 'org.reactivestreams:reactive-streams:1.0.3'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.9'
 
     // tinkoff grpc lib
@@ -46,7 +46,6 @@ dependencies {
     implementation("io.grpc:grpc-api:1.43.0")
 
     // monitoring
-    implementation 'net.bull.javamelody:javamelody-spring-boot-starter:1.91.0'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
     // lombok
