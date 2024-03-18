@@ -1,4 +1,4 @@
-FROM gradle:6.9.2-jdk11-alpine
+FROM gradle:8.6.0-jdk21-alpine
 WORKDIR /app
 COPY . ./
 RUN gradle clean class --info
