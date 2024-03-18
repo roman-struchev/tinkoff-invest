@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import javax.annotation.PostConstruct;
@@ -29,8 +30,13 @@ public class CandleListenerService {
     private final ITinkoffCommonAPI tinkoffCommonAPI;
     private final NotificationService notificationService;
 
-    private void startToListen(int number) {
+    private void startToListen() {
         var figies = strategySelector.getFigiesForActiveStrategies();
+        if (CollectionUtils.isEmpty(figies)) {
+            log.warn("No figies to subscribe");
+            return;
+        }
+
         notificationService.sendMessageAndLog("Listening candle events..");
         try {
             tinkoffCommonAPI.getApi().getMarketDataStreamService()
@@ -48,18 +54,18 @@ public class CandleListenerService {
                         }
                     }, e -> {
                         log.error("An error in candles_stream, listener will be restarted", e);
-                        startToListen(number + 1);
+                        startToListen();
                     })
                     .subscribeCandles(new ArrayList<>(figies));
         } catch (Throwable th) {
             log.error("An error in subscriber, listener will be restarted", th);
-            startToListen(number + 1);
+            startToListen();
             throw th;
         }
     }
 
     @PostConstruct
     void init() {
-        new Thread(() -> startToListen(1), "event-listener").start();
+        new Thread(() -> startToListen(), "event-listener").start();
     }
 }
