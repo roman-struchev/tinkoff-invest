@@ -1,7 +1,1 @@
-pluginManagement {
-	repositories {
-		maven { url 'https://repo.spring.io/release' }
-		gradlePluginPortal()
-	}
-}
-rootProject.name = 'invest-robot'
+rootProject.name = 'tinkoff-invest-robot'
