@@ -35,7 +35,7 @@ dependencies {
     // telegram
     implementation 'com.github.pengrad:java-telegram-bot-api:7.0.0'
 
-    // client TODO NOW - check where is used
+    // client
     implementation 'org.reactivestreams:reactive-streams:1.0.3'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
