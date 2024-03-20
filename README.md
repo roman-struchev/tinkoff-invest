@@ -155,7 +155,7 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
 5. В консоле будет лог операций, статистика доступна через UI http://localhost:10000
 
 ##### Используя gradlew (out of scope)
-Требуется posgresql, jdk 17+
+Требуется posgresql, jdk 21+
 1. Обновить конфигурацию (свойства) и подключение к posgresql в одном из профилей. 
    Профили `application-*.properties` в [src/main/resources/](src/main/resources/).
 2. Проверить/изменить стратегии в [src/main/java/com/struchev/invest/strategy](src/main/java/com/struchev/invest/strategy)
