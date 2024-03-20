@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  invest-app:
+  tinkoff-invest-robot:
     image: 'romanew/invest:latest'
-    container_name: invest-app
+    container_name: tinkoff-invest-robot
     network_mode: host
     environment:
       - spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/invest

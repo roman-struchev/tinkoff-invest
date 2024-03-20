@@ -1,29 +1,32 @@
 version: '3'
 
 services:
-  invest-app:
+  tinkoff-invest-robot:
     image: 'romanew/invest:latest'
-    container_name: invest-app
+    container_name: tinkoff-invest-robot
     depends_on:
-      - invest-db
+      - tinkoff-invest-robot-db
     ports:
       - 10000:10000
     environment:
-      - spring.datasource.url=jdbc:postgresql://invest-db:5432/postgres
+      - spring.datasource.url=jdbc:postgresql://tinkoff-invest-robot-db:5432/postgres
       - spring.datasource.username=posgres
-      - spring.datasource.password=posgres
+      - spring.datasource.password=mysecretpassword
       - candle.listener.enabled=true
       - tinkoff.emulator=false
       - tinkoff.is-token-sandbox=true
       - tinkoff.token=
       - tinkoff.account-id=
-  invest-db:
+#      - telegram.bot.token=${TELEGRAM_BOT_TOKEN}
+#      - telegram.bot.chat-id=${TELEGRAM_BOT_CHAT_ID}
+
+  tinkoff-invest-robot-db:
     image: 'postgres:14.1-alpine'
-    container_name: invest-db
+    container_name: tinkoff-invest-robot-db
     volumes:
       - ./postgresql:/var/lib/postgresql
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=posgres
-      - POSTGRES_PASSWORD=posgres
+      - POSTGRES_PASSWORD=mysecretpassword
