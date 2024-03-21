@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import ru.tinkoff.piapi.contract.v1.AccountType;
 import ru.tinkoff.piapi.core.InvestApi;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @Slf4j
 public abstract class ATinkoffAPI implements ITinkoffCommonAPI, ITinkoffOrderAPI {

@@ -1,12 +1,11 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.7'
+    id 'org.springframework.boot' version '3.2.3'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'java'
 }
 
 group = 'com.struchev.invest'
 version = '1.0.0'
-sourceCompatibility = '11'
 
 configurations {
     compileOnly {
@@ -15,53 +14,51 @@ configurations {
 }
 
 repositories {
-    maven { url 'https://repo.spring.io/release' }
     mavenCentral()
 }
 
 dependencies {
-
+    // spring
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'com.vladmihalcea:hibernate-types-52:2.3.4'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.7.3'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // retry
-    implementation 'org.springframework.retry:spring-retry:1.2.5.RELEASE'
-    implementation 'org.springframework:spring-aspects:5.2.8.RELEASE'
+    implementation 'org.springframework.retry:spring-retry:2.0.5'
+    implementation 'org.springframework:spring-aspects:6.1.5'
 
-    implementation 'com.github.pengrad:java-telegram-bot-api:5.7.0'
+    // telegram
+    implementation 'com.github.pengrad:java-telegram-bot-api:7.0.0'
 
-    implementation 'com.google.guava:guava:30.1.1-jre'
-
+    // client
     implementation 'org.reactivestreams:reactive-streams:1.0.3'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.9'
 
-    // prometheus metrics
+    // tinkoff grpc lib
+    implementation 'ru.tinkoff.piapi:java-sdk-core:1.5'
+    implementation 'io.grpc:grpc-api:1.43.0'
+
+    // monitoring
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
-    // tinkoff grpc lib
-    implementation 'ru.tinkoff.piapi:java-sdk-core:1.0-M8'
-    implementation("io.grpc:grpc-api:1.43.0")
+    // lombok
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
-    implementation 'net.bull.javamelody:javamelody-spring-boot-starter:1.91.0'
+    runtimeOnly 'org.postgresql:postgresql'
 
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    runtimeOnly 'org.postgresql:postgresql:42.7.0'
-
-    testAnnotationProcessor 'org.projectlombok:lombok'
-    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.testcontainers:testcontainers:1.15.3'
+    testImplementation 'org.testcontainers:testcontainers:1.19.7'
     testImplementation 'org.testcontainers:postgresql:1.15.3'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

@@ -1,8 +1,8 @@
-FROM gradle:6.9.2-jdk11-alpine AS build
+FROM gradle:8.6.0-jdk21-alpine AS build
 WORKDIR /app
 COPY . ./
 RUN gradle clean bootJar --info
 
-FROM openjdk:11.0.4-jre-slim
-COPY --from=build /app/build/libs/invest-robot-*.jar application.jar
+FROM openjdk:21-slim
+COPY --from=build /app/build/libs/tinkoff-invest-robot-*.jar application.jar
 ENTRYPOINT ["java", "-jar", "application.jar"]

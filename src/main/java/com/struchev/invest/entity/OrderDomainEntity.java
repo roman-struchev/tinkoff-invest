@@ -1,16 +1,14 @@
 package com.struchev.invest.entity;
 
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -26,8 +24,6 @@ import java.time.OffsetDateTime;
                 @Index(columnList = "strategy"),
                 @Index(columnList = "currency")
         })
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 public class OrderDomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,11 +64,12 @@ public class OrderDomainEntity {
 
     private Integer lots;
 
-    @Type(type = "jsonb")
+    @Type(JsonType.class)
     @Column(name = "details", columnDefinition = "jsonb")
     private OrderDetails details;
 
     @Version
+    @Column(name = "version", nullable = false)
     private Integer version;
 
     @CreationTimestamp
