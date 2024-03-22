@@ -28,7 +28,7 @@ jobs:
         uses: garygrossgarten/github-action-scp@release
         with:
           local: docker-compose-tests.yml
-          remote: ./invest/docker-compose-tests.yml
+          remote: ./tinkoff-invest-robot/docker-compose-tests.yml
           host: 31.186.136.15
           username: root
           privateKey: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
@@ -40,7 +40,7 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
           script: |
-            cd invest
+            cd tinkoff-invest-robot
             export TINKOFF_TOKEN=${{ secrets.TINKOFF_TOKEN }}
             docker-compose -f docker-compose-image-tests-app.yml down
             docker-compose -f docker-compose-image-tests-app.yml pull

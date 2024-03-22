@@ -28,7 +28,7 @@ jobs:
         uses: garygrossgarten/github-action-scp@release
         with:
           local: docker-compose-app-live.yml
-          remote: ./invest/docker-compose-app-live.yml
+          remote: ./tinkoff-invest-robot/docker-compose-app-live.yml
           host: 31.186.136.15
           username: root
           privateKey: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
@@ -40,7 +40,7 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
           script: |
-            cd invest
+            cd tinkoff-invest-robot
             export TINKOFF_TOKEN=${{ secrets.TINKOFF_TOKEN }}
             export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
