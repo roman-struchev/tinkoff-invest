@@ -178,4 +178,4 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
 - `/actuator/prometheus`
 
 # Статистика по брокерскому счету (out of scope)
-Для отображения детальной статистики по каждому из брокерских счетов разработан отдельный сервис http://tinkoff-pro.struchev.site
+Для отображения детальной статистики по каждому из брокерских счетов разработан отдельный сервис https://invest-stats.struchev.site
