@@ -167,10 +167,12 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
 
 # CI/CD
 При коммите, проект собирается через github actions и docker образы публикуются в https://hub.docker.com/repository/docker/romanew/invest.
-Экземпляр приложения разворачивается на VPS (http://invest.struchev.site)
+Экземпляры приложения разворачивается на сервере c помощью GitHub Actions.
 
 На данный момент торгуются несколько стратегий, которые обгоняют рынок.
-Актуальное состояние можно посмотреть на http://invest.struchev.site
+Актуальное состояние можно посмотреть:
+- Sandbox: https://invest-sandbox.struchev.site
+- Live: https://invest.struchev.site
 
 # Мониторинг приложения
 Подключен Spring Actuator. По умолчанию открыты:
