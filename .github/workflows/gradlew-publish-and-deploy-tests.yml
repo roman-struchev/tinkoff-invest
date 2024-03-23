@@ -41,8 +41,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
           script: |
             cd tinkoff-invest-robot
-            export TINKOFF_TOKEN=${{ secrets.TINKOFF_TOKEN }}
-            docker-compose -f docker-compose-image-tests-app.yml down
-            docker-compose -f docker-compose-image-tests-app.yml pull
-            docker-compose -f docker-compose-image-tests-app.yml up -d
+            export TINKOFF_TOKEN_SANDBOX=${{ secrets.TINKOFF_TOKEN_SANDBOX }}
+            docker-compose -f docker-compose-tests.yml down
+            docker-compose -f docker-compose-tests.yml pull
+            docker-compose -f docker-compose-tests.yml up -d
 
