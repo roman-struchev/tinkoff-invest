@@ -6,7 +6,7 @@ services:
     container_name: tinkoff-invest-robot-sandbox-2
     network_mode: host
     environment:
-      - server.port=10003
+      - server.port=10004
       - spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/invest-sandbox
       - spring.datasource.username=${POSTGRES_USER}
       - spring.datasource.password=${POSTGRES_PASSWORD}
