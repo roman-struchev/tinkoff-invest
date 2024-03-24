@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
+public class CNYbyHKDStrategy extends AInstrumentByInstrumentStrategy {
 
     private final Map<String, Integer> FIGI = Map.of(
             "BBG0013HRTL0", 6000, // CNY
-            "BBG0013HJJ31", 1000 // EUR
+            "BBG0013HSW87", 7000 // HKD
     );
 
     public Map<String, Integer> getFigies() {
