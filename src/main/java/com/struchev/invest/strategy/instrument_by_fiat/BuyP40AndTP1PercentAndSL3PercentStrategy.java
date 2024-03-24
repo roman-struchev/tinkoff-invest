@@ -8,8 +8,12 @@ import java.util.Map;
 public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
 
     private static final Map FIGIES = Map.of(
-            "BBG004730JJ5", 10,    // Московская биржа
-            "BBG008NMBXN8", 1              // Robinhood
+            "BBG000VJ5YR4", 8,   // золото
+            "BBG000VHQTD1", 6,       // серебро
+            "BBG0013HRTL0", 4,       // юань
+            "BBG004S681W1", 20,       // мтс
+            "BBG004730JJ5", 25,       // московская биржа
+            "BBG006L8G4H1", 15            // яндекс
     );
 
     public Map<String, Integer> getFigies() {
@@ -28,6 +32,6 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

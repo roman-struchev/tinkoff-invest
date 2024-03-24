@@ -8,8 +8,8 @@ import java.util.Map;
 public class BuyP10AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
 
     private static final Map FIGIES = Map.of(
-            "BBG004S683W7", 10,   // Аэрофлот
-            "BBG008NMBXN8", 1             // Robinhood
+            "TCS00A106YF0", 80, // ВК
+            "BBG004730N88", 20          // сбер
     );
 
     public Map<String, Integer> getFigies() {
@@ -28,6 +28,6 @@ public class BuyP10AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
