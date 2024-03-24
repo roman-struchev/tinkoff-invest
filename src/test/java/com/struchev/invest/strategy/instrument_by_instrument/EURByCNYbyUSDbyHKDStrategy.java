@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class JPYbyCNYByEURByGBPStrategy extends AInstrumentByInstrumentStrategy {
+public class EURByCNYbyUSDbyHKDStrategy extends AInstrumentByInstrumentStrategy {
 
     private final Map<String, Integer> FIGI = Map.of(
-            "BBG0013HQ524", 1000, // JPY
             "BBG0013HRTL0", 6000, // CNY
             "BBG0013HJJ31", 1000, // EUR
-            "BBG0013HQ5F0", 1000 // GBP
+            "BBG0013HGFT4", 1000, // USD
+            "BBG0013HSW87", 7000 // HKD
     );
 
     public Map<String, Integer> getFigies() {
@@ -23,4 +23,3 @@ public class JPYbyCNYByEURByGBPStrategy extends AInstrumentByInstrumentStrategy 
         return true;
     }
 }
-
