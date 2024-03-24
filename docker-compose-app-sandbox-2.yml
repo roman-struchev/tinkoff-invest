@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  tinkoff-invest-robot-sandbox:
+  tinkoff-invest-robot-sandbox-2:
     image: 'romanew/invest:sandbox-2-latest'
-    container_name: tinkoff-invest-robot-sandbox
+    container_name: tinkoff-invest-robot-sandbox-2
     network_mode: host
     environment:
       - server.port=10003
