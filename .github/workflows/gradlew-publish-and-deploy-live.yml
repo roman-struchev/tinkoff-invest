@@ -13,7 +13,7 @@ jobs:
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: romanew/invest:latest
+          name: romanew/invest:live-latest
           username: ${{ secrets.DOCKER_PUBLISH_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_PUBLISH_REGISTRY_PASSWORD }}
           dockerfile: Dockerfile.App

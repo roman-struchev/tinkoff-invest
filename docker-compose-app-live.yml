@@ -2,7 +2,7 @@ version: '3'
 
 services:
   tinkoff-invest-robot:
-    image: 'romanew/invest:latest'
+    image: 'romanew/invest:live-latest'
     container_name: tinkoff-invest-robot
     network_mode: host
     environment:

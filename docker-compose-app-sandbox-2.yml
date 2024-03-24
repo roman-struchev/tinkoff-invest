@@ -2,7 +2,7 @@ version: '3'
 
 services:
   tinkoff-invest-robot-sandbox:
-    image: 'romanew/invest:sandbox-latest'
+    image: 'romanew/invest:sandbox-2-latest'
     container_name: tinkoff-invest-robot-sandbox
     network_mode: host
     environment:
@@ -14,7 +14,7 @@ services:
       - tinkoff.emulator=false
       - tinkoff.is-token-sandbox=true
       - tinkoff.token=${TINKOFF_TOKEN_SANDBOX}
-      - tinkoff.account-id=909e6569-54ec-4798-9c0e-8bb4754cf5b7
+      - tinkoff.account-id=13389a0f-b954-48f1-8536-8e605af772cb
 #      - telegram.bot.token=${TELEGRAM_BOT_TOKEN}
 #      - telegram.bot.chat-id=${TELEGRAM_BOT_CHAT_ID}
     restart: always
