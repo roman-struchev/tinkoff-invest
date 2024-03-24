@@ -41,7 +41,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
           script: |
             cd tinkoff-invest-robot
-            export TINKOFF_TOKEN=${{ secrets.TINKOFF_TOKEN }}
+            export TINKOFF_TOKEN_SANDBOX=${{ secrets.TINKOFF_TOKEN_SANDBOX }}
             export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             export TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
