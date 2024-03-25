@@ -9,7 +9,7 @@ public class BuyP10AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
     private static final Map FIGIES = Map.of(
             "TCS00A106YF0", 80, // ВК
-            "BBG004730N88", 20          // сбер
+            "BBG004730N88", 200 // сбер
     );
 
     public Map<String, Integer> getFigies() {

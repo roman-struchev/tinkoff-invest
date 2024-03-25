@@ -11,9 +11,9 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
             "BBG000VJ5YR4", 8,   // золото
             "BBG000VHQTD1", 6,       // серебро
             "BBG0013HRTL0", 4,       // юань
-            "BBG004S681W1", 20,       // мтс
-            "BBG004730JJ5", 25,       // московская биржа
-            "BBG006L8G4H1", 15            // яндекс
+            "BBG004S681W1", 200,     // мтс
+            "BBG004730JJ5", 250,     // московская биржа
+            "BBG006L8G4H1", 15       // яндекс
     );
 
     public Map<String, Integer> getFigies() {
