@@ -9,7 +9,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
     private static final Map FIGIES = Map.of(
             "BBG000VJ5YR4", 8,   // золото
-            "BBG000VHQTD1", 6,       // серебро
+            "BBG000VHQTD1", 6000,    // серебро
             "BBG0013HRTL0", 4,       // юань
             "BBG004S681W1", 200,     // мтс
             "BBG004730JJ5", 250,     // московская биржа
