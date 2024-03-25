@@ -12,7 +12,7 @@ public class CNYbyUSDbyHKDbyGoldBySilverStrategy extends AInstrumentByInstrument
             "BBG0013HGFT4", 1000, // USD
             "BBG0013HSW87", 7000, // HKD
             "BBG000VJ5YR4", 14,   // золото
-            "BBG000VHQTD1", 10   // серебро
+            "BBG000VHQTD1", 1000   // серебро
     );
 
     public Map<String, Integer> getFigies() {
