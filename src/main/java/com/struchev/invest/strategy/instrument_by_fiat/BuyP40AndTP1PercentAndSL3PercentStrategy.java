@@ -16,6 +16,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
             .put("BBG004730JJ5", 250)     // московская биржа
             .put("BBG006L8G4H1", 15)      // яндекс
             .put("BBG004731354", 100)     // роснефть
+            .put("TCS00A105EX7", 150)     // whoosh
             .build();
 
     public Map<String, Integer> getFigies() {
