@@ -1,5 +1,6 @@
 package com.struchev.invest.strategy.instrument_by_fiat;
 
+import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -7,10 +8,10 @@ import java.util.Map;
 @Component
 public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
 
-    private static final Map FIGIES = Map.of(
-            "BBG004730JJ5", 10,    // Московская биржа
-            "BBG008NMBXN8", 1              // Robinhood
-    );
+    private static final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
+            .put("BBG004730JJ5", 10)    // Московская биржа
+            .put("BBG008NMBXN8", 1)     // Robinhood
+            .build();
 
     public Map<String, Integer> getFigies() {
         return FIGIES;

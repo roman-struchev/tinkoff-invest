@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @ConditionalOnProperty(name = "tinkoff.emulator", havingValue = "true", matchIfMissing = true)
 public class TinkoffMockAPI extends ATinkoffAPI {
 
-    private static final BigDecimal PERCENT = new BigDecimal("0.00025");
+    private static final BigDecimal PERCENT = new BigDecimal("0.0005");
 
     @Override
     public OrderResult buy(InstrumentService.Instrument instrument, BigDecimal price, Integer count) {
