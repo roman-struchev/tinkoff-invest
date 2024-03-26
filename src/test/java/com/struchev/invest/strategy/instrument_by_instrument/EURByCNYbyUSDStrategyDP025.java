@@ -1,5 +1,6 @@
 package com.struchev.invest.strategy.instrument_by_instrument;
 
+import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -7,14 +8,14 @@ import java.util.Map;
 @Component
 public class EURByCNYbyUSDStrategyDP025 extends AInstrumentByInstrumentStrategy {
 
-    private final Map<String, Integer> FIGI = Map.of(
-            "BBG0013HRTL0", 6000, // CNY
-            "BBG0013HJJ31", 1000, // EUR
-            "BBG0013HGFT4", 1000 // USD
-    );
+    private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
+            .put("BBG0013HRTL0", 6000) // CNY
+            .put("BBG0013HJJ31", 1000) // EUR
+            .put("BBG0013HGFT4", 1000) // USD
+            .build();
 
     public Map<String, Integer> getFigies() {
-        return FIGI;
+        return FIGIES;
     }
 
     @Override
@@ -24,6 +25,6 @@ public class EURByCNYbyUSDStrategyDP025 extends AInstrumentByInstrumentStrategy 
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 }
