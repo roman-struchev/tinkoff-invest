@@ -171,7 +171,8 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
 
 На данный момент торгуются несколько стратегий, которые обгоняют рынок.
 Актуальное состояние можно посмотреть:
-- Sandbox: https://invest-sandbox.struchev.site
+- Sandbox (акции): https://invest-sandbox.struchev.site
+- Sandbox (валюты): https://invest-sandbox-2.struchev.site
 - Live: https://invest.struchev.site
 
 # Мониторинг приложения
@@ -179,5 +180,5 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
 - `/actuator/metrics`
 - `/actuator/prometheus`
 
-# Статистика по брокерскому счету (out of scope)
-Для отображения детальной статистики по каждому из брокерских счетов разработан отдельный сервис https://invest-stats.struchev.site
+# Статистика по брокерскому счету
+Для отображения детальной статистики по любому из брокерских счетов разработан отдельный сервис https://invest-stats.struchev.site
