@@ -171,9 +171,9 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
 
 На данный момент торгуются несколько стратегий, которые обгоняют рынок.
 Актуальное состояние можно посмотреть:
-- Sandbox (акции): https://invest-sandbox.struchev.site
-- Sandbox (валюты): https://invest-sandbox-2.struchev.site
-- Live: https://invest.struchev.site
+- Sandbox 1: https://invest-sandbox.struchev.site (песочница, акции, ветка sandbox)
+- Sandbox 2: https://invest-sandbox-2.struchev.site (песочница, арбитраж валюты, ветка sandbox-2)
+- Live: https://invest.struchev.site (боевые стратегии, ветка master)
 
 # Мониторинг приложения
 Подключен Spring Actuator. По умолчанию открыты:
