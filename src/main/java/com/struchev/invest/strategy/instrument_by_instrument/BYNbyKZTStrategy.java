@@ -9,7 +9,7 @@ import java.util.Map;
 public class BYNbyKZTStrategy extends AInstrumentByInstrumentStrategy {
 
     private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
-            .put("BBG00D87WQY7", 30000) // BYN
+            .put("BBG00D87WQY7", 3000) // BYN
             .put("BBG0013HG026", 400000) // KZT
             .build();
 
