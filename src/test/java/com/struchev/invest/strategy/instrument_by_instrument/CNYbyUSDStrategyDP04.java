@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class USDByCNYStrategy extends AInstrumentByInstrumentStrategy {
+public class CNYbyUSDStrategyDP04 extends AInstrumentByInstrumentStrategy {
 
     private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
             .put("BBG0013HRTL0", 6000) // CNY
@@ -18,7 +18,12 @@ public class USDByCNYStrategy extends AInstrumentByInstrumentStrategy {
     }
 
     @Override
+    public float getMinimalDropPercent() {
+        return 0.4f;
+    }
+
+    @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

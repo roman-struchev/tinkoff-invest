@@ -14,7 +14,7 @@ services:
       - tinkoff.emulator=false
       - tinkoff.is-token-sandbox=true
       - tinkoff.token=${TINKOFF_TOKEN_SANDBOX}
-      - tinkoff.account-id=5016cc7e-259c-448b-b810-52576cf05cf7
+      - tinkoff.account-id=4f776c67-f971-40a3-8fbb-4e17b6a2a22f
 #      - telegram.bot.token=${TELEGRAM_BOT_TOKEN}
 #      - telegram.bot.chat-id=${TELEGRAM_BOT_CHAT_ID}
     restart: always

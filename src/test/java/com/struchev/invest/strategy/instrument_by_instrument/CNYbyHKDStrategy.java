@@ -19,6 +19,6 @@ public class CNYbyHKDStrategy extends AInstrumentByInstrumentStrategy {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

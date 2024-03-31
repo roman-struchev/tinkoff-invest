@@ -6,12 +6,15 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class EURByCNYbyUSDStrategyDP04 extends AInstrumentByInstrumentStrategy {
+public class CNYbyUSDbyHKDbyKZTbyGoldBySilverStrategyDP04 extends AInstrumentByInstrumentStrategy {
 
     private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
             .put("BBG0013HRTL0", 6000) // CNY
-            .put("BBG0013HJJ31", 1000) // EUR
             .put("BBG0013HGFT4", 1000) // USD
+            .put("BBG0013HSW87", 7000) // HKD
+            .put("BBG0013HG026", 400000) // KZT
+            .put("BBG000VJ5YR4", 14)   // золото
+            .put("BBG000VHQTD1", 1000)   // серебро
             .build();
 
     public Map<String, Integer> getFigies() {
@@ -25,6 +28,6 @@ public class EURByCNYbyUSDStrategyDP04 extends AInstrumentByInstrumentStrategy {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

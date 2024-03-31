@@ -9,9 +9,9 @@ import java.util.Map;
 public class CNYbyUSDbyHKDStrategyDP04 extends AInstrumentByInstrumentStrategy {
 
     private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
-            .put("BBG0013HRTL0", 6000) // CNY
+            .put("BBG0013HRTL0", 7000) // CNY
             .put("BBG0013HGFT4", 1000) // USD
-            .put("BBG0013HSW87", 7000) // HKD
+            .put("BBG0013HSW87", 8000) // HKD
             .build();
 
     public Map<String, Integer> getFigies() {

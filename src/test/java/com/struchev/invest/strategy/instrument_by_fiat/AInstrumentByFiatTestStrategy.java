@@ -44,6 +44,6 @@ public abstract class AInstrumentByFiatTestStrategy extends AInstrumentByFiatStr
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 }
