@@ -13,8 +13,8 @@ import java.time.temporal.ChronoUnit;
 
 /**
  * Сервис обрабатывает поток свечей
- * Принимает решение с помощью калькулятора о покупке/продаже инструмента в рамках включенных
- * Отправляет ордеры на исполнение
+ * Принимает решение с помощью калькулятора о покупке/продаже инструмента в рамках включенных стратегий
+ * Отправляет ордеры (покупка, продажа) на исполнение
  */
 @Service
 @Slf4j
@@ -46,20 +46,20 @@ public class PurchaseService {
         log.debug("Observe candle event: {}", candleDomainEntity);
         var strategies = strategySelector.suitableByFigi(candleDomainEntity.getFigi(), null);
         strategies.parallelStream().forEach(strategy -> {
-            // Ищем открытый ордер
+            // Ищем открытую позицию (ордер) по стратегии
             // Для стратегии instrumentByInstrument нужен ордер по инструменту свечки (торгуется стратегия в разрезе инструмента)
             // Для стратегии instrumentByInstrument нужен ордер по любому инструменту (торгуется вся стратегия целиком)
             var figiSuitableForOrder = strategy.getType() == AStrategy.Type.instrumentByFiat ? candleDomainEntity.getFigi() : null;
             var order = orderService.findActiveByFigiAndStrategy(figiSuitableForOrder, strategy);
 
-            // Нет активного ордера, возможно можем купить, если нет ограничений по задержке после stop loss
+            // Нет активной позиции по стратегии, возможно можем купить, если нет ограничений по задержке после stop loss
             if (order == null) {
                 var isShouldBuy = calculator.isShouldBuy(strategy, candleDomainEntity);
                 if (isShouldBuy) {
                     if (strategy.getType() == AStrategy.Type.instrumentByFiat && strategy.getDelayBySL() != null) {
                         var finishedOrders = orderService.findClosedByFigiAndStrategy(candleDomainEntity.getFigi(), strategy);
                         if (finishedOrders.isEmpty()) {
-                            var lastOrder = finishedOrders.get(finishedOrders.size() - 1);
+                            var lastOrder = finishedOrders.getLast();
                             if (ChronoUnit.SECONDS.between(lastOrder.getSellDateTime(), candleDomainEntity.getDateTime()) < strategy.getDelayBySL().getSeconds()) {
                                 return;
                             }
@@ -68,27 +68,29 @@ public class PurchaseService {
 
                     var currentPrices = strategy.getType() == AStrategy.Type.instrumentByInstrument
                             ? calculatorInstrumentByInstrumentService.getCurrentPrices() : null;
-                    order = orderService.openOrder(candleDomainEntity, strategy, currentPrices);
+                    order = orderService.buy(candleDomainEntity, strategy, currentPrices);
 
-                    var msg = String.format("Buy %s (%s), %s, %s, %s. Wanted %s", order.getFigi(), order.getFigiTitle(),
-                            order.getPurchasePrice(), order.getPurchaseDateTime(), order.getStrategy(), candleDomainEntity.getClosingPrice());
+                    var msg = String.format("Buy %s (%s), %s, %s, %s. Wanted %s", order.getFigi(),
+                            order.getFigiTitle(), order.getPurchasePrice(), order.getPurchaseDateTime(),
+                            order.getStrategy(), candleDomainEntity.getClosingPrice());
                     notificationService.sendMessageAndLog(msg);
                 }
                 return;
             }
 
-            // Ордер есть, но пришла свечка с датой до покупки текущего ордера, так не должно быть
+            // Позиция есть, но пришла свечка с датой до покупки текущего ордера, так не должно быть
             if (order.getPurchaseDateTime().isAfter(candleDomainEntity.getDateTime())) {
                 log.error("Was founded order before current candle date time: {}, {}", order, candleDomainEntity);
                 return;
             }
 
-            // Ордер есть, возможно можем продать
+            // Позиция есть, возможно можем продать
             var isShouldSell = calculator.isShouldSell(strategy, candleDomainEntity, order.getPurchasePrice());
             if (isShouldSell) {
-                order = orderService.closeOrder(candleDomainEntity, strategy);
-                var msg = String.format("Sell %s (%s), %s (%s), %s, %s. Wanted: %s", candleDomainEntity.getFigi(), order.getFigiTitle(),
-                        order.getSellPrice(), order.getSellProfit(), order.getSellDateTime(), order.getStrategy(), candleDomainEntity.getClosingPrice());
+                order = orderService.sell(candleDomainEntity, strategy);
+                var msg = String.format("Sell %s (%s), %s (%s), %s, %s. Wanted: %s", candleDomainEntity.getFigi(),
+                        order.getFigiTitle(), order.getSellPrice(), order.getSellProfit(), order.getSellDateTime(),
+                        order.getStrategy(), candleDomainEntity.getClosingPrice());
                 notificationService.sendMessageAndLog(msg);
                 return;
             }

@@ -7,14 +7,14 @@ import com.struchev.invest.repository.OrderRepository;
 import com.struchev.invest.service.dictionary.InstrumentService;
 import com.struchev.invest.service.tinkoff.ITinkoffOrderAPI;
 import com.struchev.invest.strategy.AStrategy;
+import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
     private final InstrumentService instrumentService;
@@ -43,7 +42,7 @@ public class OrderService {
                 .filter(o -> o.getFigi().equals(figi))
                 .filter(o -> o.getSellDateTime() != null)
                 .filter(o -> o.getStrategy().equals(strategy.getName()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public OrderDomainEntity findLastByFigiAndStrategy(String figi, AStrategy strategy) {
@@ -51,12 +50,13 @@ public class OrderService {
                 .filter(o -> figi == null || o.getFigi().equals(figi))
                 .filter(o -> o.getSellDateTime() != null)
                 .filter(o -> o.getStrategy().equals(strategy.getName()))
-                .reduce((first, second) -> second).orElse(null);
+                .reduce((first, second) -> second)
+                .orElse(null);
     }
 
     @Transactional
-    public synchronized OrderDomainEntity openOrder(CandleDomainEntity candle, AStrategy strategy, Map<String, BigDecimal> currentPrices) {
-        log.info("Open order for {} with strategy {}, orders {}", candle, strategy, orders.toArray());
+    public synchronized OrderDomainEntity buy(CandleDomainEntity candle, AStrategy strategy,
+                                              Map<String, BigDecimal> currentPrices) {
         if (currentPrices != null) {
             currentPrices = currentPrices.entrySet().stream()
                     .filter(e -> strategy.getFigies().containsKey(e.getKey()))
@@ -85,22 +85,22 @@ public class OrderService {
     }
 
     @Transactional
-    public synchronized OrderDomainEntity closeOrder(CandleDomainEntity candle, AStrategy strategy) {
-        log.info("Close order for {} with strategy {}, orders {}", candle, strategy, orders.toArray());
+    public synchronized OrderDomainEntity sell(CandleDomainEntity candle, AStrategy strategy) {
         var instrument = instrumentService.getInstrument(candle.getFigi());
         var order = findActiveByFigiAndStrategy(candle.getFigi(), strategy);
-        order.setSellPrice(candle.getClosingPrice());
-        order.setSellProfit(candle.getClosingPrice().subtract(order.getPurchasePrice()));
-        order.setSellDateTime(candle.getDateTime());
 
         var result = tinkoffOrderAPI.sell(instrument, candle.getClosingPrice(), order.getLots());
+        order.setSellDateTime(OffsetDateTime.now());
         order.setSellCommission(result.getCommission());
-        order.setSellPrice(result.getPrice());
+        order.setSellPrice(result.getPrice() == null ? candle.getClosingPrice() : result.getPrice());
         order.setSellProfit(result.getPrice().subtract(order.getPurchasePrice()));
         order = orderRepository.save(order);
 
         var orderId = order.getId();
-        var orderInList = orders.stream().filter(o -> o.getId().equals(orderId)).findFirst().orElseThrow();
+        var orderInList = orders.stream()
+                .filter(o -> o.getId().equals(orderId)).findFirst()
+                .orElseThrow();
+
         orders.remove(orderInList);
         orders.add(order);
         return order;
@@ -108,7 +108,7 @@ public class OrderService {
 
     @PostConstruct
     public void loadOrdersFromDB() {
-        orders = new CopyOnWriteArrayList();
+        orders = new CopyOnWriteArrayList<>();
         orders.addAll(orderRepository.findAll(Sort.by("id")));
     }
 }
