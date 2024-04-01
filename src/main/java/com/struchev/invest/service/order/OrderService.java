@@ -8,6 +8,7 @@ import com.struchev.invest.service.dictionary.InstrumentService;
 import com.struchev.invest.service.tinkoff.ITinkoffOrderAPI;
 import com.struchev.invest.strategy.AStrategy;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
     private final InstrumentService instrumentService;
@@ -54,6 +56,7 @@ public class OrderService {
 
     @Transactional
     public synchronized OrderDomainEntity openOrder(CandleDomainEntity candle, AStrategy strategy, Map<String, BigDecimal> currentPrices) {
+        log.info("Open order for {} with strategy {}, orders {}", candle, strategy, orders.toArray());
         if (currentPrices != null) {
             currentPrices = currentPrices.entrySet().stream()
                     .filter(e -> strategy.getFigies().containsKey(e.getKey()))
@@ -83,6 +86,7 @@ public class OrderService {
 
     @Transactional
     public synchronized OrderDomainEntity closeOrder(CandleDomainEntity candle, AStrategy strategy) {
+        log.info("Close order for {} with strategy {}, orders {}", candle, strategy, orders.toArray());
         var instrument = instrumentService.getInstrument(candle.getFigi());
         var order = findActiveByFigiAndStrategy(candle.getFigi(), strategy);
         order.setSellPrice(candle.getClosingPrice());
