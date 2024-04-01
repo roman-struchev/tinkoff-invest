@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<head th:insert="fragments/head.html"/>
+<head th:replace="~{fragments/general.html :: head}"/>
 <body>
-<header th:insert="fragments/header.html"/>
+<header th:replace="~{fragments/general.html :: header}"/>
 <div class="container mt-3">
     <input class="form-control" id="instr-vs-fiat-filter-input" type="text"
            placeholder="Type something in to search the table">
