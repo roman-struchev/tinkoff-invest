@@ -70,8 +70,8 @@ public class PurchaseService {
                             ? calculatorInstrumentByInstrumentService.getCurrentPrices() : null;
                     order = orderService.buy(candleDomainEntity, strategy, currentPrices);
 
-                    var msg = String.format("Buy %s (%s), %s, %s, %s. Wanted %s", order.getFigi(),
-                            order.getFigiTitle(), order.getPurchasePrice(), order.getPurchaseDateTime(),
+                    var msg = String.format("Buy %s (%s), %s x%s, %s, %s. Wanted %s", order.getFigi(),
+                            order.getFigiTitle(), order.getPurchasePrice(), order.getLots(), order.getPurchaseDateTime(),
                             order.getStrategy(), candleDomainEntity.getClosingPrice());
                     notificationService.sendMessageAndLog(msg);
                 }
@@ -88,9 +88,9 @@ public class PurchaseService {
             var isShouldSell = calculator.isShouldSell(strategy, candleDomainEntity, order.getPurchasePrice());
             if (isShouldSell) {
                 order = orderService.sell(candleDomainEntity, strategy);
-                var msg = String.format("Sell %s (%s), %s (%s), %s, %s. Wanted: %s", candleDomainEntity.getFigi(),
-                        order.getFigiTitle(), order.getSellPrice(), order.getSellProfit(), order.getSellDateTime(),
-                        order.getStrategy(), candleDomainEntity.getClosingPrice());
+                var msg = String.format("Sell %s (%s), %s x%s (%s), %s, %s. Wanted: %s", candleDomainEntity.getFigi(),
+                        order.getFigiTitle(), order.getSellPrice(), order.getLots(), order.getSellProfit(),
+                        order.getSellDateTime(), order.getStrategy(), candleDomainEntity.getClosingPrice());
                 notificationService.sendMessageAndLog(msg);
                 return;
             }
