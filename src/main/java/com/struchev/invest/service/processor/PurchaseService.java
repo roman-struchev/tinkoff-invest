@@ -42,7 +42,7 @@ public class PurchaseService {
         }
     }
 
-    public void observeNewCandle(CandleDomainEntity candleDomainEntity) {
+    public synchronized void observeNewCandle(CandleDomainEntity candleDomainEntity) {
         log.debug("Observe candle event: {}", candleDomainEntity);
         var strategies = strategySelector.suitableByFigi(candleDomainEntity.getFigi(), null);
         strategies.parallelStream().forEach(strategy -> {
