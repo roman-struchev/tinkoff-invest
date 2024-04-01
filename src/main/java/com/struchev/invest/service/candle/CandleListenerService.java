@@ -37,7 +37,7 @@ public class CandleListenerService {
             return;
         }
 
-        notificationService.sendMessageAndLog("Listening candle events..");
+        notificationService.sendMessageAndLog("Start to listen candle events..");
         try {
             tinkoffCommonAPI.getApi().getMarketDataStreamService()
                     .newStream("candles_stream", item -> {
