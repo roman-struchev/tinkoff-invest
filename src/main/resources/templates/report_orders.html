@@ -11,8 +11,9 @@
         <tr>
             <th>Instrument</th>
             <th>Strategy</th>
-            <th>Purchase price</th>
-            <th>Purchase time</th>
+            <th>Buy time</th>
+            <th>Buy price</th>
+            <th>Lots</th>
             <th>Sell price</th>
             <th>Sell time</th>
             <th>Commission</th>
@@ -23,13 +24,14 @@
         <tr th:each="o: ${orders}">
             <td th:text="${o.figiTitle}"/>
             <td th:text="${o.strategy}"/>
-            <td th:text="${#numbers.formatDecimal(o.purchasePrice, 1, 4, 'DEFAULT')}"/>
             <td th:text="${{o.purchaseDateTime}}"/>
+            <td th:text="${#numbers.formatDecimal(o.purchasePrice, 1, 4, 'DEFAULT')}"/>
+            <td th:text="${o.lots}"/>
             <td th:text="${o.sellPrice == null ? null : #numbers.formatDecimal(o.sellPrice, 1, 4, 'DEFAULT')}"/>
             <td th:text="${{o.sellDateTime}}"/>
             <td th:text="${#numbers.formatDecimal(o.purchaseCommission.add(o.sellCommission == null ? 0 : o.sellCommission), 1, 2, 'DEFAULT')}"/>
             <td>
-                <span th:text="${#numbers.formatDecimal(o.sellPrice.subtract(o.purchasePrice).subtract(o.purchaseCommission).subtract(o.sellCommission), 1, 2, 'DEFAULT')}"
+                <span th:text="${#numbers.formatDecimal(o.sellPrice.subtract(o.purchasePrice).multiply(o.lots).subtract(o.purchaseCommission).subtract(o.sellCommission), 1, 2, 'DEFAULT')}"
                       th:if="${o.sellPrice != null && o.purchaseCommission != null && o.sellCommission != null}"/>
             </td>
         </tr>
