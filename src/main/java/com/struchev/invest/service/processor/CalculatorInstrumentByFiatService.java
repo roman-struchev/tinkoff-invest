@@ -105,15 +105,15 @@ public class CalculatorInstrumentByFiatService implements ICalculatorService<AIn
      * - сработали оба stopLossPercent, stopLossPercentile are happened
      *
      * @param candle
-     * @param purchaseRate
+     * @param purchasePrice
      * @return
      */
     @Override
-    public boolean isShouldSell(AInstrumentByFiatStrategy strategy, CandleDomainEntity candle, BigDecimal purchaseRate) {
+    public boolean isShouldSell(AInstrumentByFiatStrategy strategy, CandleDomainEntity candle, BigDecimal purchasePrice) {
         var sellCriteria = strategy.getSellCriteria();
-        var profitPercent = candle.getClosingPrice().subtract(purchaseRate)
+        var profitPercent = candle.getClosingPrice().subtract(purchasePrice)
                 .multiply(BigDecimal.valueOf(100))
-                .divide(purchaseRate, 4, RoundingMode.HALF_DOWN);
+                .divide(purchasePrice, 4, RoundingMode.HALF_DOWN);
         // profit % > take profit %, profit % > 0.1%
         if (sellCriteria.getTakeProfitPercent() != null
                 && profitPercent.floatValue() > sellCriteria.getTakeProfitPercent()
