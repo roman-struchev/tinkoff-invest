@@ -70,7 +70,7 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
      * @param candle
      * @return
      */
-    public boolean isShouldSell(AInstrumentByInstrumentStrategy strategy, CandleDomainEntity candle, BigDecimal purchaseRate) {
+    public boolean isShouldSell(AInstrumentByInstrumentStrategy strategy, CandleDomainEntity candle, BigDecimal purchasePrice) {
         currentPrices.put(candle.getFigi(), candle.getClosingPrice());
 
         if (!strategy.getFigies().keySet().stream().allMatch(figi -> currentPrices.get(figi) != null)) {

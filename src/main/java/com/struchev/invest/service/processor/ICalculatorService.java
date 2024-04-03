@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 interface ICalculatorService<T extends AStrategy> {
     boolean isShouldBuy(T strategy, CandleDomainEntity candle);
 
-    boolean isShouldSell(T strategy, CandleDomainEntity candle, BigDecimal purchaseRate);
+    boolean isShouldSell(T strategy, CandleDomainEntity candle, BigDecimal purchasePrice);
 
     AStrategy.Type getStrategyType();
 }
