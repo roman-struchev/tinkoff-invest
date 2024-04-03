@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CalculatorInstrumentByInstrumentService implements ICalculatorService<AInstrumentByInstrumentStrategy> {
     private final OrderService orderService;
+    private final StateLogger stateLogger;
 
     @Getter
     private final Map<String, BigDecimal> currentPrices = new ConcurrentHashMap<>();
@@ -99,7 +100,12 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
 
         // Нужно чтобы цена одного из инструментов упала (в процентах) относительно цены покупки текущего инструмента на сколько-то
         // Тогда будет выгодно продать текущую и купить другую (по рыночной цене, если будут заявки в стакане и перекроем комиссию)
-        return changePercentForCurrentFigi - changePercentMin.getValue() > strategy.getMinimalDropPercent();
+        var result = changePercentForCurrentFigi - changePercentMin.getValue() > strategy.getMinimalDropPercent();
+        if (!result) {
+            stateLogger.logStateIfSellingStuckNoThrow(strategy.getName(), lastOpenOrder.getFigi(),
+                    lastOpenOrder.getPurchaseDateTime(), lastOpenOrder.getPurchasePrice(), changePercents);
+        }
+        return result;
     }
 
     @Override
