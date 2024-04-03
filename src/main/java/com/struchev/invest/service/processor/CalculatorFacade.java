@@ -24,8 +24,8 @@ public class CalculatorFacade {
         return calculateServiceByType.get(strategy.getType()).isShouldBuy(strategy, candle);
     }
 
-    public <T extends AStrategy> boolean isShouldSell(T strategy, CandleDomainEntity candle, BigDecimal purchaseRate) {
-        return calculateServiceByType.get(strategy.getType()).isShouldSell(strategy, candle, purchaseRate);
+    public <T extends AStrategy> boolean isShouldSell(T strategy, CandleDomainEntity candle, BigDecimal purchasePrice) {
+        return calculateServiceByType.get(strategy.getType()).isShouldSell(strategy, candle, purchasePrice);
     }
 
     @PostConstruct
