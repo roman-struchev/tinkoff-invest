@@ -30,4 +30,11 @@ public abstract class AInstrumentByInstrumentStrategy extends AStrategy {
     public float getMinimalDropPercent() {
         return 0.5f;
     }
+
+    /**
+     * Если стратегия застряла в активе (просел относительно других), то принудительно продаем через указанное время
+     */
+    public Duration getForceToSellDuration() {
+        return null;
+    }
 }

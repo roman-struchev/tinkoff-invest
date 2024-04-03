@@ -98,6 +98,14 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
         var changePercentMin = changePercents.entrySet().stream()
                 .reduce((v1, v2) -> v1.getValue() < v2.getValue() ? v1 : v2).orElseThrow();
 
+        // если стратегия застряла в активе (просел относительно других), то принудительно продаем через указанное время
+        var forceToSellDuration = strategy.getForceToSellDuration();
+        if(forceToSellDuration != null
+                && lastOpenOrder.getPurchaseDateTime().plus(forceToSellDuration).isBefore(candle.getDateTime())) {
+            log.warn("Force to sell {}, {}. Last order {}", strategy.getName(), lastOpenOrder.getFigi(), lastOpenOrder.getPurchaseDateTime());
+            return true;
+        }
+
         // Нужно чтобы цена одного из инструментов упала (в процентах) относительно цены покупки текущего инструмента на сколько-то
         // Тогда будет выгодно продать текущую и купить другую (по рыночной цене, если будут заявки в стакане и перекроем комиссию)
         var result = changePercentForCurrentFigi - changePercentMin.getValue() > strategy.getMinimalDropPercent();
