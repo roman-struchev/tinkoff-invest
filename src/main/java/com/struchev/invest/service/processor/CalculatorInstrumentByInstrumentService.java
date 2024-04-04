@@ -45,13 +45,15 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
 
         var lastOrder = orderService.findLastByFigiAndStrategy(null, strategy);
         if (lastOrder == null) {
-            // если нет открытого ордера в рамках стратегии, то покупаем любой инструмент
+            // Не было ордера в рамках стратегии, то покупаем любой инструмент
             return true;
         }
 
-        // покупаем, если цена данного инструмента изменилась на меньший процент, чем у остальных из стратегии с момента последней покупки
+        // Покупаем инструмент, отличающийся от последнего
+        // Цена инструмента должна измениться на меньший процент, чем у остальных из стратегии с момента последней покупки
         var changePercents = lastOrder.getDetails().getCurrentPrices().entrySet().stream()
                 .filter(e -> strategy.getFigies().containsKey(e.getKey()))
+                .filter(e -> !lastOrder.getFigi().equals(e.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     var figi = e.getKey();
                     var priceWhenBuy = e.getValue();
