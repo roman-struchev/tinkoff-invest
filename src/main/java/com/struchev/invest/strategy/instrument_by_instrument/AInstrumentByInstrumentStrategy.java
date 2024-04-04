@@ -35,6 +35,6 @@ public abstract class AInstrumentByInstrumentStrategy extends AStrategy {
      * Если стратегия застряла в активе (просел относительно других), то принудительно продаем через указанное время
      */
     public Duration getForceToSellDuration() {
-        return null;//Duration.ofDays(2);
+        return Duration.ofDays(2);
     }
 }
