@@ -53,7 +53,7 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
         // Цена инструмента должна измениться на меньший процент, чем у остальных из стратегии с момента последней покупки
         var changePercents = lastOrder.getDetails().getCurrentPrices().entrySet().stream()
                 .filter(e -> strategy.getFigies().containsKey(e.getKey()))
-                .filter(e -> !lastOrder.getFigi().equals(e.getKey()))
+                // .filter(e -> !lastOrder.getFigi().equals(e.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     var figi = e.getKey();
                     var priceWhenBuy = e.getValue();
