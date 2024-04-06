@@ -6,7 +6,7 @@
     <input class="form-control" id="orders-filter-input" type="text"
            placeholder="Type something in to search the table">
     <br>
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped table-sm">
         <thead>
         <tr>
             <th>Instrument</th>
@@ -24,11 +24,11 @@
         <tr th:each="o: ${orders}">
             <td th:text="${o.figiTitle}"/>
             <td th:text="${o.strategy}"/>
-            <td th:text="${{o.purchaseDateTime}}"/>
+            <td th:text="${#temporals.formatISO(o.purchaseDateTime)}"/>
             <td th:text="${#numbers.formatDecimal(o.purchasePrice, 1, 4, 'DEFAULT')}"/>
             <td th:text="${o.lots}"/>
             <td th:text="${o.sellPrice == null ? null : #numbers.formatDecimal(o.sellPrice, 1, 4, 'DEFAULT')}"/>
-            <td th:text="${{o.sellDateTime}}"/>
+            <td th:text="${#temporals.formatISO(o.sellDateTime)}"/>
             <td th:text="${#numbers.formatDecimal(o.purchaseCommission.add(o.sellCommission == null ? 0 : o.sellCommission), 1, 2, 'DEFAULT')}"/>
             <td>
                 <span th:text="${#numbers.formatDecimal(o.sellPrice.subtract(o.purchasePrice).multiply(o.lots).subtract(o.purchaseCommission).subtract(o.sellCommission), 1, 2, 'DEFAULT')}"
@@ -38,6 +38,7 @@
         </tbody>
     </table>
     <script>
+        // Support filtering
         $(document).ready(function () {
             $("#orders-filter-input").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
@@ -45,6 +46,15 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+        });
+
+        // Apply timezone to dates
+        $('#orders-table td:nth-child(3), #orders-table td:nth-child(7)').each(function() {
+            var dateString = $(this).text();
+            if(dateString) {
+                var date = new Date(dateString);
+                $(this).text(date.toLocaleString([], {dateStyle: "short", timeStyle: 'short'}));
+            }
         });
     </script>
 </div>
