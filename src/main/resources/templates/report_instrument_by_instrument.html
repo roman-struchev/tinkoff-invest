@@ -22,7 +22,7 @@
         <tbody id="instr-vs-instr-table">
         <tr th:each="r: ${reportInstrumentByInstrument}">
             <td th:text="${r.strategy}"/>
-            <td th:text="${{r.initDate}}"/>
+            <td th:text="${#temporals.formatISO(r.initDate)}"/>
             <td th:text="${#numbers.formatDecimal(r.initAmount, 1, 2, 'DEFAULT') + ' ' + r.initFigiTitle}"/>
             <td th:text="${#numbers.formatDecimal(r.lastAmount, 1, 2, 'DEFAULT') + ' ' + r.lastFigiTitle}"/>
             <td th:classappend="${r.percent >= 0} ? text-success" th:text="${#numbers.formatDecimal(r.percent, 1, 2, 'DEFAULT')}"/>
@@ -34,6 +34,7 @@
     </table>
 
     <script>
+        // Support filtering
         $(document).ready(function () {
             $("#instr-vs-instr-filter-input").on("keyup", function () {
                 var value = $(this).val().toLowerCase();
@@ -41,6 +42,15 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+        });
+
+        // Apply timezone to dates
+        $('#instr-vs-instr-table td:nth-child(2)').each(function() {
+            var dateString = $(this).text();
+            if(dateString) {
+                var date = new Date(dateString);
+                $(this).text(date.toLocaleString([], {dateStyle: "short", timeStyle: 'short'}));
+            }
         });
     </script>
 </div>
