@@ -9,14 +9,14 @@ import java.util.Map;
 public abstract class AStrategy {
 
     /**
-     * Карта FIGI: количество бумаг для торговли
+     * Карта FIGI, количество лотов для торговли
      *
      * @return
      */
     public abstract Map<String, Integer> getFigies();
 
     /**
-     * Количество бумаг для торговли заданным figi
+     * Количество лотов для торговли по figi
      *
      * @param figi
      * @return
@@ -33,20 +33,34 @@ public abstract class AStrategy {
         return this.getClass().getSimpleName();
     }
 
+    /**
+     * Включена ли стратегия
+     */
     public boolean isEnabled() {
         return false;
     }
 
+    /**
+     * Задержка между торговлей (продажей и покупкой) в случае продажи по stop loss
+     */
     public abstract Duration getDelayBySL();
 
+    /**
+     * Разрешаем только продажу инструмента, запрещаем покупку (после продажи стратегия больше не будет торговаться)
+     * Используется для завершения торговли в рамках стратегии, перед ее стратегии
+     */
+    public boolean isOnlySell() {
+        return false;
+    }
+
+    public abstract Type getType();
+
+    @Getter
     @AllArgsConstructor
     public enum Type {
         instrumentByFiat("Инструмент за фиат"),
         instrumentByInstrument("Инструмент за инструмент");
 
-        @Getter
-        String title;
+        private final String title;
     }
-
-    public abstract Type getType();
 }
