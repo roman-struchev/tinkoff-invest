@@ -35,19 +35,19 @@ USD дорожает относительно RUB в течении дня, EUR 
 ```java
 public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
 
-   private static final Map FIGIES = Map.of(
-           "BBG0013HRTL0", 6000, // CNY
-           "BBG0013HJJ31", 1000 // EUR
-   );
+    private static final Map FIGIES = Map.of(
+            "BBG0013HRTL0", 6000, // CNY
+            "BBG0013HJJ31", 1000 // EUR
+    );
 
-   public Map<String, Integer> getFigies() {
-      return FIGIES;
-   }
+    public Map<String, Integer> getFigies() {
+        return FIGIES;
+    }
 
-   @Override
-   public boolean isEnabled() {
-      return true;
-   }
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
 ```
 ##### Атрибуты стратегии
@@ -68,28 +68,28 @@ public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
 @Component
 public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
 
-   private static final Map FIGIES = Map.of(
-           "BBG008NMBXN8", 1    // Robinhood
-   );
+    private static final Map FIGIES = Map.of(
+            "BBG008NMBXN8", 1    // Robinhood
+    );
 
-   public Map<String, Integer> getFigies() {
-      return FIGIES;
-   }
+    public Map<String, Integer> getFigies() {
+        return FIGIES;
+    }
 
-   @Override
-   public AInstrumentByFiatStrategy.BuyCriteria getBuyCriteria() {
-      return AInstrumentByFiatStrategy.BuyCriteria.builder().lessThenPercentile(40).build();
-   }
+    @Override
+    public AInstrumentByFiatStrategy.BuyCriteria getBuyCriteria() {
+        return AInstrumentByFiatStrategy.BuyCriteria.builder().lessThenPercentile(40).build();
+    }
 
-   @Override
-   public AInstrumentByFiatStrategy.SellCriteria getSellCriteria() {
-      return AInstrumentByFiatStrategy.SellCriteria.builder().takeProfitPercent(1f).stopLossPercent(3f).build();
-   }
+    @Override
+    public AInstrumentByFiatStrategy.SellCriteria getSellCriteria() {
+        return AInstrumentByFiatStrategy.SellCriteria.builder().takeProfitPercent(1f).stopLossPercent(3f).build();
+    }
 
-   @Override
-   public boolean isEnabled() {
-      return true;
-   }
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
 ```
 ##### Атрибуты стратегии

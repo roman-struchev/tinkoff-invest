@@ -21,4 +21,9 @@ public class CNYByUSDStrategy extends AInstrumentByInstrumentStrategy {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public boolean isOnlySell() {
+        return true;
+    }
 }

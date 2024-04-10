@@ -27,4 +27,9 @@ public class CNYbyUSDStrategyDP04 extends AInstrumentByInstrumentStrategy {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public boolean isOnlySell() {
+        return true;
+    }
 }
