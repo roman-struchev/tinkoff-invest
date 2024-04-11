@@ -3,12 +3,10 @@
 <body>
 <header th:replace="~{fragments/general.html :: header}"/>
 <div class="container mt-3">
-    <input class="form-control" id="orders-filter-input" type="text"
-           placeholder="Type something in to search the table">
-    <br>
-    <table class="table table-bordered table-striped table-sm">
+    <table id="orders-table" class="table table-bordered table-striped table-sm small">
         <thead>
         <tr>
+            <th>№</th>
             <th>Instrument</th>
             <th>Strategy</th>
             <th>Buy time</th>
@@ -20,8 +18,9 @@
             <th>Profit</th>
         </tr>
         </thead>
-        <tbody id="orders-table">
+        <tbody id="orders-table-body">
         <tr th:each="o: ${orders}">
+            <td th:text="${o.id}"/>
             <td th:text="${o.figiTitle}"/>
             <td th:text="${o.strategy}"/>
             <td th:text="${#temporals.formatISO(o.purchaseDateTime)}"/>
@@ -38,18 +37,19 @@
         </tbody>
     </table>
     <script>
-        // Support filtering
+        // Support filtering and pages
         $(document).ready(function () {
-            $("#orders-filter-input").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#orders-table tr").filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
+            new DataTable('#orders-table', {
+                pageLength: 100,
+                lengthChange: false,
+                order: [
+                    [0, "desc"]
+                ]
             });
         });
 
         // Apply timezone to dates
-        $('#orders-table td:nth-child(3), #orders-table td:nth-child(7)').each(function() {
+        $('#orders-table-body td:nth-child(4), #orders-table td:nth-child(8)').each(function() {
             var dateString = $(this).text();
             if(dateString) {
                 var date = new Date(dateString);
