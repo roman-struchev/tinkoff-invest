@@ -3,10 +3,7 @@
 <body>
 <header th:replace="~{fragments/general.html :: header}"/>
 <div class="container mt-3">
-    <input class="form-control" id="instr-vs-instr-filter-input" type="text"
-           placeholder="Type something in to search the table">
-    <br>
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped table-sm small">
         <thead>
         <tr>
             <th>Strategy</th>
@@ -34,16 +31,6 @@
     </table>
 
     <script>
-        // Support filtering
-        $(document).ready(function () {
-            $("#instr-vs-instr-filter-input").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#instr-vs-instr-table tr").filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-        });
-
         // Apply timezone to dates
         $('#instr-vs-instr-table td:nth-child(2)').each(function() {
             var dateString = $(this).text();
