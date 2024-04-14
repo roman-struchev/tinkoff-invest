@@ -26,9 +26,10 @@ public class StrategySelector {
                 .collect(Collectors.toList());
     }
 
-    public boolean isEnabled(String name) {
+    public boolean isEnabled(String name, String figi) {
         return activeStrategies.stream()
                 .filter(s -> s.getName().equals(name))
+                .filter(s -> figi == null || s.isSuitableByFigi(figi))
                 .map(AStrategy::isEnabled)
                 .findFirst().orElse(false);
     }
