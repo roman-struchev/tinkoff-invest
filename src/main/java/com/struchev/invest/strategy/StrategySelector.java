@@ -26,6 +26,13 @@ public class StrategySelector {
                 .collect(Collectors.toList());
     }
 
+    public boolean isEnabled(String name) {
+        return activeStrategies.stream()
+                .filter(s -> s.getName().equals(name))
+                .map(AStrategy::isEnabled)
+                .findFirst().orElse(false);
+    }
+
     public List<AStrategy> getActiveStrategies() {
         return activeStrategies;
     }

@@ -10,6 +10,8 @@ import com.struchev.invest.strategy.AStrategy;
 import com.struchev.invest.strategy.StrategySelector;
 import com.struchev.invest.strategy.instrument_by_fiat.AInstrumentByFiatStrategy;
 import com.struchev.invest.strategy.instrument_by_instrument.AInstrumentByInstrumentStrategy;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -73,7 +73,8 @@ public class ReportService {
                 .filter(r -> strategySelector.getStrategyType(String.valueOf(r[1]), null) == AStrategy.Type.instrumentByFiat)
                 .map(r -> OrderReportInstrumentByFiatRow.builder()
                         .figiTitle(String.valueOf(r[0]))
-                        .strategy(String.valueOf(r[1]))
+                        .strategyName(String.valueOf(r[1]))
+                        .strategyIsEnabled(strategySelector.isEnabled(String.valueOf(r[1])))
                         .profitByRobot(r[2] == null ? BigDecimal.ZERO : new BigDecimal(String.valueOf(r[2])).setScale(2, RoundingMode.HALF_UP))
                         .profitByInvest(new BigDecimal(String.valueOf(r[3])))
                         .orders(Integer.valueOf(String.valueOf(r[4])))
@@ -86,16 +87,18 @@ public class ReportService {
 
     public List<OrderReportInstrumentByInstrumentRow> buildReportInstrumentByInstrument() {
         var orders = orderRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-        var strategies = orders.stream().map(OrderDomainEntity::getStrategy).collect(Collectors.toSet());
-        return strategies.stream()
-                .filter(strategy -> strategySelector.getStrategyType(strategy, null) == AStrategy.Type.instrumentByInstrument)
-                .map(strategy -> {
+        var strategiesNames = orders.stream()
+                .map(OrderDomainEntity::getStrategy)
+                .collect(Collectors.toSet());
+        return strategiesNames.stream()
+                .filter(strategyName -> strategySelector.getStrategyType(strategyName, null) == AStrategy.Type.instrumentByInstrument)
+                .map(strategyName -> {
                     var ordersByStrategy = orders.stream()
-                            .filter(o -> o.getStrategy().equals(strategy))
-                            .collect(Collectors.toList());
-                    var initDate = ordersByStrategy.get(0).getPurchaseDateTime();
-                    var initAmount = ordersByStrategy.isEmpty() ? 0 : ordersByStrategy.get(0).getLots();
-                    var initFigiTitle = ordersByStrategy.isEmpty() ? null : ordersByStrategy.get(0).getFigiTitle();
+                            .filter(o -> o.getStrategy().equals(strategyName))
+                            .toList();
+                    var initDate = ordersByStrategy.getFirst().getPurchaseDateTime();
+                    var initAmount = ordersByStrategy.isEmpty() ? 0 : ordersByStrategy.getFirst().getLots();
+                    var initFigiTitle = ordersByStrategy.isEmpty() ? null : ordersByStrategy.getFirst().getFigiTitle();
                     var lastAmount = (double) initAmount;
                     var lastAmountInInitFigi = (double) initAmount;
                     var lastDate = initDate;
@@ -119,7 +122,8 @@ public class ReportService {
                             .initFigiTitle(initFigiTitle)
                             .lastAmount(BigDecimal.valueOf(lastAmountInInitFigi).setScale(2, RoundingMode.HALF_UP))
                             .lastFigiTitle(initFigiTitle)
-                            .strategy(strategy)
+                            .strategyName(strategyName)
+                            .strategyIsEnabled(strategySelector.isEnabled(strategyName))
                             .orders(ordersByStrategy.size())
                             .commission(commission.setScale(2, RoundingMode.HALF_UP))
                             .percent(BigDecimal.valueOf(percent).setScale(2, RoundingMode.HALF_UP))
@@ -134,7 +138,7 @@ public class ReportService {
         log.info("---------------------- Report instrument by fiat start ----------------------");
         for (var row : rows) {
             log.info("{}: {} | init price {} | last price {} | by robot {}% | by invest: {}% | orders {}",
-                    row.getStrategy(), row.getFigiTitle(), row.getFirstPrice(), row.getLastPrice(),
+                    row.getStrategyName(), row.getFigiTitle(), row.getFirstPrice(), row.getLastPrice(),
                     row.getProfitByRobot(), row.getProfitByInvest(), row.getOrders());
         }
         log.info("---------------------- Report instrument by fiat end ------------------------\n");
@@ -144,7 +148,7 @@ public class ReportService {
         log.info("---------------------- Report instrument by instrument start ----------------------");
         for (var row : rows) {
             log.info("{} | init amount {} {} | last amount {} {} | profit {}% | orders {} | commission {} RUB | {} days",
-                    row.getStrategy(), row.getInitAmount(), row.getInitFigiTitle(),
+                    row.getStrategyName(), row.getInitAmount(), row.getInitFigiTitle(),
                     row.getLastAmount(), row.getLastFigiTitle(), row.getPercent(), row.getOrders(),
                     row.getCommission(), row.getDuration().toDays());
         }

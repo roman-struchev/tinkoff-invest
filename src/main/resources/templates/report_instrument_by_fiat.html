@@ -16,9 +16,9 @@
         </tr>
         </thead>
         <tbody id="instr-vs-fiat-table">
-        <tr th:each="r: ${reportInstrumentByFiat}">
+        <tr th:each="r: ${reportInstrumentByFiat}" th:classappend="${!r.strategyIsEnabled} ? text-secondary">
             <td th:text="${r.figiTitle}"/>
-            <td th:text="${r.strategy}"/>
+            <td th:text="${r.strategyName + (r.strategyIsEnabled ? '' : ' (disabled)')}"/>
             <td th:classappend="${r.profitByRobot >= r.profitByInvest} ? text-success" th:text="${#numbers.formatDecimal(r.profitByRobot, 1, 2, 'DEFAULT')}"/>
             <td th:text="${#numbers.formatDecimal(r.profitByInvest, 1, 2, 'DEFAULT')}"/>
             <td th:text="${r.orders}"/>
