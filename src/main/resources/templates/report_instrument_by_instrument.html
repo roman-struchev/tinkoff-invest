@@ -17,12 +17,13 @@
         </tr>
         </thead>
         <tbody id="instr-vs-instr-table">
-        <tr th:each="r: ${reportInstrumentByInstrument}">
-            <td th:text="${r.strategy}"/>
+        <tr th:each="r: ${reportInstrumentByInstrument}" th:classappend="${!r.strategyIsEnabled} ? text-secondary">
+            <td th:text="${r.strategyName + (r.strategyIsEnabled ? '' : ' (disabled)')}"/>
             <td th:text="${#temporals.formatISO(r.initDate)}"/>
             <td th:text="${#numbers.formatDecimal(r.initAmount, 1, 2, 'DEFAULT') + ' ' + r.initFigiTitle}"/>
             <td th:text="${#numbers.formatDecimal(r.lastAmount, 1, 2, 'DEFAULT') + ' ' + r.lastFigiTitle}"/>
-            <td th:classappend="${r.percent >= 0} ? text-success" th:text="${#numbers.formatDecimal(r.percent, 1, 2, 'DEFAULT')}"/>
+            <td th:classappend="${r.percent >= 0} ? text-success"
+                th:text="${#numbers.formatDecimal(r.percent, 1, 2, 'DEFAULT')}"/>
             <td th:text="${r.orders}"/>
             <td th:text="${#numbers.formatDecimal(r.commission, 1, 2, 'DEFAULT') + ' RUB'}"/>
             <td th:text="${r.duration.toDays()}"/>
@@ -32,9 +33,9 @@
 
     <script>
         // Apply timezone to dates
-        $('#instr-vs-instr-table td:nth-child(2)').each(function() {
+        $('#instr-vs-instr-table td:nth-child(2)').each(function () {
             var dateString = $(this).text();
-            if(dateString) {
+            if (dateString) {
                 var date = new Date(dateString);
                 $(this).text(date.toLocaleString([], {dateStyle: "short", timeStyle: 'short'}));
             }

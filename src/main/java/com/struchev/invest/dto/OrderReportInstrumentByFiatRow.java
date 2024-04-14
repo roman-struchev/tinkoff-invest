@@ -13,7 +13,8 @@ import java.math.BigDecimal;
 @Builder
 public class OrderReportInstrumentByFiatRow {
     private String figiTitle;
-    private String strategy;
+    private String strategyName;
+    private boolean strategyIsEnabled;
     private BigDecimal firstPrice;
     private BigDecimal lastPrice;
     private BigDecimal profitByRobot;

@@ -14,7 +14,8 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @Builder
 public class OrderReportInstrumentByInstrumentRow {
-    private String strategy;
+    private String strategyName;
+    private boolean strategyIsEnabled;
 
     private String initFigiTitle;
     private String lastFigiTitle;
