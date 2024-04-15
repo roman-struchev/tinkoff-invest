@@ -22,4 +22,5 @@ public class StrategyInfoReportRow {
     private AInstrumentByFiatStrategy.SellCriteria sellCriteria;
     private Duration history;
     private Float dropPercent;
+    private Boolean isOnlySell;
 }
