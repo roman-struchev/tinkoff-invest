@@ -75,8 +75,8 @@
         // Support filtering and pages
         $(document).ready(function () {
             new DataTable('#strategies-table', {
-                pageLength: 100,
-                lengthChange: false,
+                paging: false,
+                info: false,
                 order: [
                     [0, "desc"]
                 ]
