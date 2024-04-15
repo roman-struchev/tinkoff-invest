@@ -45,19 +45,25 @@ public class ReportService {
 
     public List<StrategyInfoReportRow> buildReportStrategiesInfo() {
         return strategySelector.getAllStrategies().stream()
-                .map(s -> StrategyInfoReportRow.builder()
-                        .isEnabled(s.isEnabled())
-                        .name(s.getName())
-                        .type(s.getType().getTitle())
-                        .figies(s.getFigies().entrySet().stream().collect(Collectors.toMap(e -> {
-                            var instrument = instrumentService.getInstrument(e.getKey());
-                            return instrument == null ? e.getKey() : instrument.getName();
-                        }, Map.Entry::getValue)))
-                        .buyCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getBuyCriteria() : null)
-                        .sellCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getSellCriteria() : null)
-                        .history(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getHistoryDuration() : null)
-                        .dropPercent(s instanceof AInstrumentByInstrumentStrategy ? ((AInstrumentByInstrumentStrategy) s).getMinimalDropPercent() : null)
-                        .build())
+                .map(s -> {
+                    var figies = s.getFigies().entrySet().stream()
+                            .collect(Collectors.toMap(e -> {
+                                var instrument = instrumentService.getInstrument(e.getKey());
+                                return instrument == null ? e.getKey() : instrument.getName();
+                            }, Map.Entry::getValue));
+                    return StrategyInfoReportRow.builder()
+                            .isEnabled(s.isEnabled())
+                            .name(s.getName())
+                            .type(s.getType().getTitle())
+                            .figies(figies)
+                            .buyCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getBuyCriteria() : null)
+                            .sellCriteria(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getSellCriteria() : null)
+                            .history(s instanceof AInstrumentByFiatStrategy ? ((AInstrumentByFiatStrategy) s).getHistoryDuration() : null)
+                            .dropPercent(s instanceof AInstrumentByInstrumentStrategy ? ((AInstrumentByInstrumentStrategy) s).getMinimalDropPercent() : null)
+                            .isOnlySell(s.isOnlySell())
+                            .build();
+                })
+                .sorted(Comparator.comparing(StrategyInfoReportRow::getName))
                 .collect(Collectors.toList());
     }
 
