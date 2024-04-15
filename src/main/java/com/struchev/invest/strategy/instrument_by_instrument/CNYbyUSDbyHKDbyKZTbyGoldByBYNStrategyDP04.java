@@ -3,11 +3,10 @@ package com.struchev.invest.strategy.instrument_by_instrument;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.Map;
 
 @Component
-public class CNYbyUSDbyHKDbyKZTbyGoldBySilverStrategyDP04 extends AInstrumentByInstrumentStrategy {
+public class CNYbyUSDbyHKDbyKZTbyGoldByBYNStrategyDP04 extends AInstrumentByInstrumentStrategy {
 
     private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
             .put("BBG0013HRTL0", 7000) // CNY
@@ -15,7 +14,7 @@ public class CNYbyUSDbyHKDbyKZTbyGoldBySilverStrategyDP04 extends AInstrumentByI
             .put("BBG0013HSW87", 8000) // HKD
             .put("BBG0013HG026", 400000) // KZT
             .put("BBG000VJ5YR4", 14)   // золото
-            .put("BBG000VHQTD1", 1000)   // серебро
+            .put("BBG00D87WQY7", 3000) // BYN
             .build();
 
     public Map<String, Integer> getFigies() {
@@ -29,11 +28,6 @@ public class CNYbyUSDbyHKDbyKZTbyGoldBySilverStrategyDP04 extends AInstrumentByI
 
     @Override
     public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public boolean isOnlySell() {
-        return true;
+        return false;
     }
 }
