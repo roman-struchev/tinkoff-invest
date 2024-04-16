@@ -1,9 +1,9 @@
 package com.struchev.invest.service.candle;
 
-import com.struchev.invest.service.notification.NotificationService;
 import com.struchev.invest.service.processor.PurchaseService;
 import com.struchev.invest.service.tinkoff.ITinkoffCommonAPI;
 import com.struchev.invest.strategy.StrategySelector;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
-import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +27,6 @@ public class CandleListenerService {
     private final PurchaseService purchaseService;
     private final StrategySelector strategySelector;
     private final ITinkoffCommonAPI tinkoffCommonAPI;
-    private final NotificationService notificationService;
 
     private void startToListen() {
         var figies = strategySelector.getFigiesForActiveStrategies();
@@ -37,7 +35,7 @@ public class CandleListenerService {
             return;
         }
 
-        notificationService.sendMessageAndLog("Start to listen candle events..");
+        log.info("Start to listen candle events..");
         try {
             tinkoffCommonAPI.getApi().getMarketDataStreamService()
                     .newStream("candles_stream", item -> {
@@ -50,7 +48,7 @@ public class CandleListenerService {
                             candle.setLow(item.getCandle().getLow());
                             candle.setTime(item.getCandle().getTime());
                             var candleDomainEntity = candleHistoryService.addOrReplaceCandles(candle.build(), item.getCandle().getFigi());
-                            purchaseService.observeNewCandleNoThrow(candleDomainEntity);
+                            purchaseService.observeCandleNoThrow(candleDomainEntity);
                         }
                     }, e -> {
                         log.error("An error in candles_stream, listener will be restarted", e);
