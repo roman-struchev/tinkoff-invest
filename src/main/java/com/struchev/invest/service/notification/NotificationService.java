@@ -7,14 +7,13 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.request.SendMessage;
-import io.micrometer.core.instrument.util.StringUtils;
+import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import jakarta.annotation.PostConstruct;
 
 /**
  * Service to send messages and errors in preconfigured channels
@@ -40,11 +39,6 @@ public class NotificationService {
             var message = new SendMessage(telegramBotChatId, content);
             this.bot.execute(message);
         }
-    }
-
-    public void sendMessageAndLog(String content) {
-        log.warn(content);
-        sendMessage(content);
     }
 
     @PostConstruct
@@ -81,7 +75,7 @@ public class NotificationService {
         }
 
         if (StringUtils.isEmpty(telegramBotToken) || StringUtils.isEmpty(telegramBotChatId)) {
-            log.warn("Telegram properties no defined properly: telegram.bot.token {}, telegram.bot.chat-id {}",
+            log.info("Telegram properties no defined properly: telegram.bot.token {}, telegram.bot.chat-id {}",
                     telegramBotToken, telegramBotChatId);
         }
     }

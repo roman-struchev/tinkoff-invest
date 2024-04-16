@@ -28,14 +28,17 @@ public class PurchaseService {
     private final CalculatorInstrumentByInstrumentService calculatorInstrumentByInstrumentService;
 
     /**
-     * Обработчик новой свечи используя оба типа стратегий
-     * Не выбрасывает исключения, логирует ошибку
+     * Обработчик новой свечи по всем стратегиям
+     * Запускает параллельно обработку свечи по каждой стратегии
+     * Не выбрасывает исключение, логирует ошибку
      *
      * @param candleDomainEntity
      */
-    public void observeNewCandleNoThrow(CandleDomainEntity candleDomainEntity) {
+    public synchronized void observeCandleNoThrow(CandleDomainEntity candleDomainEntity) {
         try {
-            this.observeNewCandle(candleDomainEntity);
+            log.debug("Observe candle event: {}", candleDomainEntity);
+            var strategies = strategySelector.suitableByFigi(candleDomainEntity.getFigi(), null);
+            strategies.parallelStream().forEach(strategy -> observeCandle(candleDomainEntity, strategy));
         } catch (Exception e) {
             var msg = String.format("An error during observe new candle %s, %s", candleDomainEntity, e.getMessage());
             log.error(msg, e);
@@ -43,26 +46,28 @@ public class PurchaseService {
         }
     }
 
-    public synchronized void observeNewCandle(CandleDomainEntity candleDomainEntity) {
-        log.debug("Observe candle event: {}", candleDomainEntity);
-        var strategies = strategySelector.suitableByFigi(candleDomainEntity.getFigi(), null);
-        strategies.parallelStream().forEach(strategy -> {
-            // Ищем открытую позицию (ордер) по стратегии
-            // - для стратегии instrumentByFiat нужен ордер по инструменту свечки (торгуется стратегия в разрезе инструмента)
-            // - для стратегии instrumentByInstrument нужен ордер по любому инструменту (торгуется вся стратегия целиком)
-            var figiForOrder = switch (strategy.getType()) {
-                case instrumentByFiat -> candleDomainEntity.getFigi();
-                case instrumentByInstrument -> null;
-            };
-            var order = orderService.findActiveByFigiAndStrategy(figiForOrder, strategy);
+    /**
+     * Обработчик новой свечи по конкретной стратегии
+     *
+     * @param candleDomainEntity
+     * @param strategy
+     */
+    private void observeCandle(CandleDomainEntity candleDomainEntity, AStrategy strategy) {
+        // Ищем открытую позицию (ордер) по стратегии
+        // - для стратегии instrumentByFiat нужен ордер по инструменту свечки (торгуется стратегия в разрезе инструмента)
+        // - для стратегии instrumentByInstrument нужен ордер по любому инструменту (торгуется вся стратегия целиком)
+        var figiForOrder = switch (strategy.getType()) {
+            case instrumentByFiat -> candleDomainEntity.getFigi();
+            case instrumentByInstrument -> null;
+        };
+        var order = orderService.findActiveByFigiAndStrategy(figiForOrder, strategy);
 
-            // Нет активной позиции по стратегии -> возможно можем купить, иначе продать
-            if (order == null) {
-                buy(candleDomainEntity, strategy);
-            } else {
-                sell(candleDomainEntity, order, strategy);
-            }
-        });
+        // Нет активной позиции по стратегии -> возможно можем купить, иначе продать
+        if (order == null) {
+            buy(candleDomainEntity, strategy);
+        } else {
+            sell(candleDomainEntity, order, strategy);
+        }
     }
 
     /**
@@ -101,7 +106,8 @@ public class PurchaseService {
         var msg = String.format("Buy %s (%s), %s x%s, %s, %s. Wanted %s", order.getFigi(),
                 order.getFigiTitle(), order.getPurchasePrice(), order.getLots(), order.getPurchaseDateTime(),
                 order.getStrategy(), candleDomainEntity.getClosingPrice());
-        notificationService.sendMessageAndLog(msg);
+        log.warn(msg);
+        notificationService.sendMessage(msg);
     }
 
     /**
@@ -129,6 +135,12 @@ public class PurchaseService {
         var msg = String.format("Sell %s (%s), %s x%s (%s), %s, %s. Wanted: %s", candleDomainEntity.getFigi(),
                 order.getFigiTitle(), order.getSellPrice(), order.getLots(), order.getSellProfit(),
                 order.getSellDateTime(), order.getStrategy(), candleDomainEntity.getClosingPrice());
-        notificationService.sendMessageAndLog(msg);
+        log.warn(msg);
+        notificationService.sendMessage(msg);
+
+        // Если продали, то сразу можно купить, не дожидаясь след. свечи, например для стратегии типа instrumentByInstrument
+        if(strategy.getType() == AStrategy.Type.instrumentByInstrument) {
+            observeCandle(candleDomainEntity, strategy);
+        }
     }
 }
