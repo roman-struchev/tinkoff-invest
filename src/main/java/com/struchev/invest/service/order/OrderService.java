@@ -54,7 +54,7 @@ public class OrderService {
                 .orElse(null);
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public synchronized OrderDomainEntity buy(CandleDomainEntity candle, AStrategy strategy,
                                               Map<String, BigDecimal> currentPrices) {
         if (currentPrices != null) {
@@ -84,7 +84,7 @@ public class OrderService {
         return order;
     }
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public synchronized OrderDomainEntity sell(CandleDomainEntity candle, AStrategy strategy) {
         var instrument = instrumentService.getInstrument(candle.getFigi());
         var order = findActiveByFigiAndStrategy(candle.getFigi(), strategy);

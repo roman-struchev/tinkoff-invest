@@ -6,18 +6,18 @@ import com.struchev.invest.service.tinkoff.ITinkoffCommonAPI;
 import com.struchev.invest.strategy.AStrategy;
 import com.struchev.invest.strategy.StrategySelector;
 import com.struchev.invest.strategy.instrument_by_fiat.AInstrumentByFiatStrategy;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -47,7 +47,7 @@ public class CandleHistoryService {
     @Value("${candle.listener.enabled:false}")
     private Boolean isCandleListenerEnabled;
 
-    @Transactional
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public CandleDomainEntity addOrReplaceCandles(HistoricCandle newCandle, String figi) {
         try {
             var dateTime = ConvertorUtils.toOffsetDateTime(newCandle.getTime().getSeconds());
