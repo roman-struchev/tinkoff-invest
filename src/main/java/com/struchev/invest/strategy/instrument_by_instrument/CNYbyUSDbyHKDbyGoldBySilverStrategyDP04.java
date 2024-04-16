@@ -27,7 +27,7 @@ public class CNYbyUSDbyHKDbyGoldBySilverStrategyDP04 extends AInstrumentByInstru
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     @Override
