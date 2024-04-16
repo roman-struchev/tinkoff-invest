@@ -63,7 +63,7 @@ public class CandleHistoryService {
                         || highestPrice.compareTo(candleDomainEntity.getHighestPrice()) != 0
                         || openPrice.compareTo(candleDomainEntity.getOpenPrice()) != 0
                         || lowestPrice.compareTo(candleDomainEntity.getLowestPrice()) != 0) {
-                    log.trace("Replaced candle {} to candle {}:", candleDomainEntity, newCandle);
+                    log.trace("Replaced existing candle {} to candle {}:", candleDomainEntity, newCandle);
                     candleDomainEntity.setClosingPrice(closingProse);
                     candleDomainEntity.setHighestPrice(highestPrice);
                     candleDomainEntity.setLowestPrice(lowestPrice);
@@ -82,10 +82,10 @@ public class CandleHistoryService {
                     .dateTime(dateTime)
                     .build();
             candleDomainEntity = candleRepository.save(candleDomainEntity);
-            log.trace("Add new candle {}", candleDomainEntity);
+            log.trace("Saved new candle {}", candleDomainEntity);
             return candleDomainEntity;
         } catch (Exception e) {
-            log.error("Can't add candle", e);
+            log.error("Can't save new candle", e);
             throw e;
         }
     }
@@ -121,7 +121,7 @@ public class CandleHistoryService {
             return tinkoffCommonAPI.getApi().getMarketDataService().getCandles(figi, start.toInstant(),
                     end.toInstant(), resolution).get();
         } catch (Exception e) {
-            log.error("Can't get candles for figi {}", e);
+            log.error("Can't get candles for figi {}", figi, e);
             Thread.sleep(10000);
             return requestCandles(figi, start, end, resolution, tries - 1);
         }
@@ -131,7 +131,6 @@ public class CandleHistoryService {
      * Request candle history by API and save it to DB
      *
      * @param days
-     * @return
      */
     @SneakyThrows
     public void requestCandlesHistoryForDays(long days) {
@@ -142,7 +141,7 @@ public class CandleHistoryService {
         var now = OffsetDateTime.now();
         var figies = strategySelector.getFigiesForActiveStrategies();
         log.info("Start to load history {} days, for figies {}", days, figies);
-        figies.stream().forEach(figi ->
+        figies.forEach(figi ->
                 LongStream.range(0, days).forEach(i -> {
                     log.info("Request candles {}, {} day", figi, i);
                     var candles = requestCandles(figi, now.minusDays(i + 1), now.minusDays(i), CandleInterval.CANDLE_INTERVAL_1_MIN, 12);
@@ -156,7 +155,7 @@ public class CandleHistoryService {
 
     public OffsetDateTime getFirstCandleDateTime(String figi) {
         return firstCandleDateTimeByFigi.computeIfAbsent(figi, f -> {
-            var firstCandle = candleRepository.findByFigiAndIntervalOrderByDateTime(f, "1min").get(0);
+            var firstCandle = candleRepository.findByFigiAndIntervalOrderByDateTime(f, "1min").getFirst();
             return firstCandle.getDateTime();
         });
     }
@@ -175,7 +174,7 @@ public class CandleHistoryService {
         if (!isCandleListenerEnabled) {
             var candles = candleRepository.findByIntervalOrderByDateTime("1min");
             candlesLocalCache = candles.stream()
-                    .peek(c -> entityManager.detach(c))
+                    .peek(entityManager::detach)
                     .collect(Collectors.groupingBy(CandleDomainEntity::getFigi));
         }
     }
