@@ -29,7 +29,7 @@ public class StateLogger {
             return;
         }
         var changePercentsStr = new ObjectMapper().writeValueAsString(changePercents);
-        log.info("Position selling is to long {}, {} (price {}, date {}). Changes by figies: {}",
+        log.debug("Position selling is to long {}, {} (price {}, date {}). Changes by figies: {}",
                 strategy, figi, purchasePrice, purchaseDate, changePercentsStr);
 
     }
@@ -39,7 +39,7 @@ public class StateLogger {
         try {
             logStateIfSellingStuck(strategy, figi, purchaseDate, purchasePrice, changePercents);
         } catch (Exception e) {
-            log.error("An error occurred while", e);
+            log.error("An error occurred while log state if selling stuck", e);
         }
     }
 }
