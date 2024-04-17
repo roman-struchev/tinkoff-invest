@@ -137,10 +137,5 @@ public class PurchaseService {
                 order.getSellDateTime(), order.getStrategy(), candleDomainEntity.getClosingPrice());
         log.warn(msg);
         notificationService.sendMessage(msg);
-
-        // Если продали, то сразу можно купить, не дожидаясь след. свечи, например для стратегии типа instrumentByInstrument
-        if(strategy.getType() == AStrategy.Type.instrumentByInstrument) {
-            observeCandle(candleDomainEntity, strategy);
-        }
     }
 }
