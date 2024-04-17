@@ -25,9 +25,11 @@
             <td th:text="${o.figiTitle}"/>
             <td th:text="${o.strategy}"/>
             <td th:text="${#temporals.formatISO(o.purchaseDateTime)}"/>
-            <td th:text="${#numbers.formatDecimal(o.purchasePrice, 1, 4, 'DEFAULT')}"/>
+            <td th:text="${#numbers.formatDecimal(o.purchasePrice, 1, 4, 'DEFAULT')}"
+                data-toggle="tooltip" data-placement="top" th:title="${o.details?.currentPrices}"/>
             <td th:text="${o.lots}"/>
-            <td th:text="${o.sellPrice == null ? null : #numbers.formatDecimal(o.sellPrice, 1, 4, 'DEFAULT')}"/>
+            <td th:text="${o.sellPrice == null ? null : #numbers.formatDecimal(o.sellPrice, 1, 4, 'DEFAULT')}"
+                data-toggle="tooltip" data-placement="top" th:title="${o.details?.sellPrices}"/>
             <td th:text="${#temporals.formatISO(o.sellDateTime)}"/>
             <td th:text="${#numbers.formatDecimal(o.purchaseCommission.add(o.sellCommission == null ? 0 : o.sellCommission), 1, 2, 'DEFAULT')}"/>
             <td>

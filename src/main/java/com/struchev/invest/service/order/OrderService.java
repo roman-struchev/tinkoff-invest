@@ -5,6 +5,7 @@ import com.struchev.invest.entity.OrderDetails;
 import com.struchev.invest.entity.OrderDomainEntity;
 import com.struchev.invest.repository.OrderRepository;
 import com.struchev.invest.service.dictionary.InstrumentService;
+import com.struchev.invest.service.price.PricesService;
 import com.struchev.invest.service.tinkoff.ITinkoffOrderAPI;
 import com.struchev.invest.strategy.AStrategy;
 import jakarta.annotation.PostConstruct;
@@ -16,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +25,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final InstrumentService instrumentService;
     private final ITinkoffOrderAPI tinkoffOrderAPI;
+    private final PricesService pricesService;
 
     private volatile List<OrderDomainEntity> orders;
 
@@ -55,14 +55,9 @@ public class OrderService {
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public synchronized OrderDomainEntity buy(CandleDomainEntity candle, AStrategy strategy,
-                                              Map<String, BigDecimal> currentPrices) {
-        if (currentPrices != null) {
-            currentPrices = currentPrices.entrySet().stream()
-                    .filter(e -> strategy.getFigies().containsKey(e.getKey()))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }
+    public synchronized OrderDomainEntity buy(CandleDomainEntity candle, AStrategy strategy) {
         var instrument = instrumentService.getInstrument(candle.getFigi());
+        var currentPrices = pricesService.getCurrentPrices(strategy);
         var order = OrderDomainEntity.builder()
                 .currency(instrument.getCurrency())
                 .figi(instrument.getFigi())
@@ -87,6 +82,7 @@ public class OrderService {
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public synchronized OrderDomainEntity sell(CandleDomainEntity candle, AStrategy strategy) {
         var instrument = instrumentService.getInstrument(candle.getFigi());
+        var currentPrices = pricesService.getCurrentPrices(strategy);
         var order = findActiveByFigiAndStrategy(candle.getFigi(), strategy);
 
         var result = tinkoffOrderAPI.sell(instrument, candle.getClosingPrice(), order.getLots());
@@ -94,6 +90,9 @@ public class OrderService {
         order.setSellCommission(result.getCommission());
         order.setSellPrice(result.getPrice() == null ? candle.getClosingPrice() : result.getPrice());
         order.setSellProfit(result.getPrice().subtract(order.getPurchasePrice()));
+        if (order.getDetails() != null) {
+            order.getDetails().setSellPrices(currentPrices);
+        }
         order = orderRepository.save(order);
 
         var orderId = order.getId();
