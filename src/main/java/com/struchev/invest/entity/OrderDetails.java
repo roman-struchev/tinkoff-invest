@@ -14,4 +14,5 @@ import java.util.Map;
 @Builder
 public class OrderDetails {
     Map<String, BigDecimal> currentPrices;
+    Map<String, BigDecimal> sellPrices;
 }

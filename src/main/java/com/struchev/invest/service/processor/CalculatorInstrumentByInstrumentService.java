@@ -2,16 +2,15 @@ package com.struchev.invest.service.processor;
 
 import com.struchev.invest.entity.CandleDomainEntity;
 import com.struchev.invest.service.order.OrderService;
+import com.struchev.invest.service.price.PricesService;
 import com.struchev.invest.strategy.AStrategy;
 import com.struchev.invest.strategy.instrument_by_instrument.AInstrumentByInstrumentStrategy;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -24,9 +23,7 @@ import java.util.stream.Collectors;
 public class CalculatorInstrumentByInstrumentService implements ICalculatorService<AInstrumentByInstrumentStrategy> {
     private final OrderService orderService;
     private final StateLogger stateLogger;
-
-    @Getter
-    private final Map<String, BigDecimal> currentPrices = new ConcurrentHashMap<>();
+    private final PricesService pricesService;
 
     /**
      * Будет куплен инструмент, у которого цена изменилась на меньший процент, чем у остальных из стратегии с момента последней покупки
@@ -36,16 +33,15 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
      * @return
      */
     public boolean isShouldBuy(AInstrumentByInstrumentStrategy strategy, CandleDomainEntity candle) {
-        currentPrices.put(candle.getFigi(), candle.getClosingPrice());
-
-        // еще нет стоимости в памяти по всем инструментам
+        // Еще нет стоимости в памяти по всем инструментам
+        var currentPrices = pricesService.getCurrentPrices(strategy);
         if (!strategy.getFigies().keySet().stream().allMatch(figi -> currentPrices.get(figi) != null)) {
             return false;
         }
 
+        // Не было ордера в рамках стратегии, то покупаем любой инструмент
         var lastOrder = orderService.findLastByFigiAndStrategy(null, strategy);
         if (lastOrder == null) {
-            // Не было ордера в рамках стратегии, то покупаем любой инструмент
             return true;
         }
 
@@ -53,7 +49,6 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
         // Цена инструмента должна измениться на меньший процент, чем у остальных из стратегии с момента последней покупки
         var changePercents = lastOrder.getDetails().getCurrentPrices().entrySet().stream()
                 .filter(e -> strategy.getFigies().containsKey(e.getKey()))
-                // .filter(e -> !lastOrder.getFigi().equals(e.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     var figi = e.getKey();
                     var priceWhenBuy = e.getValue();
@@ -74,16 +69,15 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
      * @return
      */
     public boolean isShouldSell(AInstrumentByInstrumentStrategy strategy, CandleDomainEntity candle, BigDecimal purchasePrice) {
-        currentPrices.put(candle.getFigi(), candle.getClosingPrice());
-
+        // Еще нет стоимости в памяти по всем инструментам
+        var currentPrices = pricesService.getCurrentPrices(strategy);
         if (!strategy.getFigies().keySet().stream().allMatch(figi -> currentPrices.get(figi) != null)) {
-            // Нет стоимости по всем инструментам в стратегии
             return false;
         }
 
+        // Нет купленного инструмента в рамках стратегии, нечего продавать
         var lastOpenOrder = orderService.findActiveByFigiAndStrategy(null, strategy);
         if (!lastOpenOrder.getFigi().equals(candle.getFigi())) {
-            // Нет купленного инструмента в рамках стратегии, нечего продавать
             return false;
         }
 
@@ -100,7 +94,7 @@ public class CalculatorInstrumentByInstrumentService implements ICalculatorServi
         var changePercentMin = changePercents.entrySet().stream()
                 .reduce((v1, v2) -> v1.getValue() < v2.getValue() ? v1 : v2).orElseThrow();
 
-        // если стратегия застряла в активе (просел относительно других), то принудительно продаем через указанное время
+        // если стратегия застряла в инструменте (просел относительно других), то принудительно продаем через указанное время
         var forceToSellDuration = strategy.getForceToSellDuration();
         if(forceToSellDuration != null
                 && lastOpenOrder.getPurchaseDateTime().plus(forceToSellDuration).isBefore(candle.getDateTime())) {
