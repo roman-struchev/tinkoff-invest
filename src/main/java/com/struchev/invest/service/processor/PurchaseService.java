@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -106,7 +108,8 @@ public class PurchaseService {
         var msg = String.format("Buy %s (%s), %s x%s, %s, %s. Wanted %s", order.getFigi(),
                 order.getFigiTitle(), order.getPurchasePrice(), order.getLots(), order.getPurchaseDateTime(),
                 order.getStrategy(), candle.getClosingPrice());
-        log.warn(msg);
+        log.info(msg);
+        logIfAmountChanged(candle, order.getPurchasePrice());
         notificationService.sendMessage(msg);
     }
 
@@ -135,7 +138,26 @@ public class PurchaseService {
         var msg = String.format("Sell %s (%s), %s x%s (%s), %s, %s. Wanted: %s", candle.getFigi(),
                 order.getFigiTitle(), order.getSellPrice(), order.getLots(), order.getSellProfit(),
                 order.getSellDateTime(), order.getStrategy(), candle.getClosingPrice());
-        log.warn(msg);
+        log.info(msg);
+        logIfAmountChanged(candle, order.getSellPrice());
         notificationService.sendMessage(msg);
+    }
+
+    /**
+     * Логируем если фактическая и ожидаемая цена отличаются более чем на 0.1%
+     *
+     * @param candle
+     * @param amountFact
+     */
+    private void logIfAmountChanged(CandleDomainEntity candle, BigDecimal amountFact) {
+        try {
+            var distance = candle.getClosingPrice().subtract(amountFact).abs();
+            var percent = BigDecimal.valueOf(0.001);
+            if (distance.divide(amountFact, 4, RoundingMode.HALF_EVEN).compareTo(percent) > 0) {
+                log.warn("Price for {} significantly changed: {} -> {}", candle.getFigi(), candle.getClosingPrice(), amountFact);
+            }
+        } catch (Exception e) {
+            log.error("An error during logIfAmountChanged", e);
+        }
     }
 }
