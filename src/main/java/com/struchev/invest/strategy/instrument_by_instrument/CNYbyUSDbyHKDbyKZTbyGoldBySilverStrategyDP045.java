@@ -3,6 +3,7 @@ package com.struchev.invest.strategy.instrument_by_instrument;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Component
@@ -34,5 +35,10 @@ public class CNYbyUSDbyHKDbyKZTbyGoldBySilverStrategyDP045 extends AInstrumentBy
     @Override
     public boolean isOnlySell() {
         return true;
+    }
+
+    @Override
+    public Duration getForceToSellDuration() {
+        return Duration.ofDays(4);
     }
 }

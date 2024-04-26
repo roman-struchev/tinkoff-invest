@@ -3,6 +3,7 @@ package com.struchev.invest.strategy.instrument_by_instrument;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Component
@@ -23,6 +24,11 @@ public class CNYbyUSDbyHKDbyGoldBySilverStrategyDP045 extends AInstrumentByInstr
     @Override
     public float getMinimalDropPercent() {
         return 0.45f;
+    }
+
+    @Override
+    public Duration getForceToSellDuration() {
+        return Duration.ofDays(4);
     }
 
     @Override
