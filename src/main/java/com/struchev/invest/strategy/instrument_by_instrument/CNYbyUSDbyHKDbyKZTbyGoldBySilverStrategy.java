@@ -24,16 +24,11 @@ public class CNYbyUSDbyHKDbyKZTbyGoldBySilverStrategy extends AInstrumentByInstr
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isOnlySell() {
         return true;
-    }
-
-    @Override
-    public Duration getForceToSellDuration() {
-        return Duration.ofDays(4);
     }
 }

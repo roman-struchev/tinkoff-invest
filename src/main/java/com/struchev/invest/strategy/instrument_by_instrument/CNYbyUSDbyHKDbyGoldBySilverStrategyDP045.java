@@ -27,13 +27,8 @@ public class CNYbyUSDbyHKDbyGoldBySilverStrategyDP045 extends AInstrumentByInstr
     }
 
     @Override
-    public Duration getForceToSellDuration() {
-        return Duration.ofDays(4);
-    }
-
-    @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     @Override
