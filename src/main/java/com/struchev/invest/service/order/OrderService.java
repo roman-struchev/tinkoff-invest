@@ -78,7 +78,7 @@ public class OrderService {
                 .strategy(strategy.getName())
                 .purchaseDateTime(candle.getDateTime())
                 .lots(lots)
-                .purchaseCommission(BigDecimal.ZERO)
+                .purchaseCommission(response.getCommission())
                 .details(orderDetails)
                 .build();
         order = orderRepository.save(order);
