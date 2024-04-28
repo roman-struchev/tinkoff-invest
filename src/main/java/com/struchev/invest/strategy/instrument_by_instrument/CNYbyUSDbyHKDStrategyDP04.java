@@ -28,9 +28,4 @@ public class CNYbyUSDbyHKDStrategyDP04 extends AInstrumentByInstrumentStrategy {
     public boolean isEnabled() {
         return true;
     }
-
-    @Override
-    public Duration getForceToSellDuration() {
-        return Duration.ofDays(4);
-    }
 }
