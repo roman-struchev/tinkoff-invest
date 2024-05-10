@@ -1,5 +1,5 @@
 # Торговый робот для Тинкофф Инвестиций
-🥇 The winner in [Tinkoff Invest Robot Contest](https://github.com/Tinkoff/invest-robot-contest)
+🥇 The winner in [Tinkoff Invest Robot Contest 2022](https://github.com/Tinkoff/invest-robot-contest) (номинация java)
 
 # Конфигурация
 ##### Tinkoff invest API
@@ -21,7 +21,7 @@ telegram.bot.chat-id: id чата, будет отправлен в чат, ес
 ##### Описание
 Прибыль за счет торговли при изменении стоимости торговых инструментов, относительно друг друга (арбитраж). В рамках одной стратегии должно быть не менее 2х инструментов.
 ##### Применение
-Используется для перекладывания средств между валютами на московской бирже вследствие периодически меняющейся стоимости валют относительно друг друга (предположительно на фоне наличия позиций покупки/продажи конкретной валюты крупными игроками, экспортерами и т.д.) на московской бирже.
+Используется для перемещения средств между валютами на московской бирже вследствие периодически меняющейся стоимости валют относительно друг друга (предположительно на фоне наличия позиций покупки/продажи конкретной валюты крупными игроками, экспортерами, ЦБ и т.д.).
 
 Продажа текущего инструмента и покупка другого из стратегии происходит при увеличении цены текущего относительно покупаемого на определенный процент (0.5% по умолчанию).
 
@@ -35,24 +35,26 @@ USD дорожает относительно RUB в течении дня, EUR 
 ```java
 public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
 
-   private static final Map FIGIES = Map.of(
-           "BBG0013HRTL0", 6000, // CNY
-           "BBG0013HJJ31", 1000 // EUR
-   );
+    private static final Map FIGIES = Map.of(
+            "BBG0013HRTL0", 6000, // CNY
+            "BBG0013HJJ31", 1000 // EUR
+    );
 
-   public Map<String, Integer> getFigies() {
-      return FIGIES;
-   }
+    public Map<String, Integer> getFigies() {
+        return FIGIES;
+    }
 
-   @Override
-   public boolean isEnabled() {
-      return true;
-   }
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
 ```
 ##### Атрибуты стратегии
 - `AInstrumentByInstrumentStrategy.getFigies` - список FIGI (инструментов) и количество бумаг, которые используются в стратегии (минимум 2 инструмента)
 - `AInstrumentByInstrumentStrategy.getMinimalDropPercent` - процент падения стоимости одного из инструментов в стратегии относительно инструмента, которым владеем (по умолчанию 0.5%). Выполняется операция продажи/покупки при достижении данного значения
+- `AInstrumentByInstrumentStrategy.getForceToSellDuration` - максимальное период, которое держим средства в одном из инструментов (по умолчанию 30 дней)
+
 ##### Расположение
 - live/sandbox: [src/main/java/com/struchev/invest/strategy/instrument_by_instrument](src/main/java/com/struchev/invest/strategy/instrument_by_instrument)
 - tests: [src/test/java/com/struchev/invest/strategy/instrument_by_instrument](src/test/java/com/struchev/invest/strategy/instrument_by_instrument)
@@ -63,33 +65,33 @@ public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
 ##### Применение
 Классическая покупка/продажа инструмента на основе критериев, индикаторов, истории свечей.
 ##### Пример стратегии
-Торговля акциями Robinhood, покупаем при цене меньше 40% значения за последние 7 дней, продаем при достижении прибыли в 1%, либо убытка в 3% (есть в проекте, запущено на продакшене)
+Торговля акциями Tinkoff, покупаем при цене меньше 40% значения за последние 7 дней, продаем при достижении прибыли в 1%, либо убытка в 3% (есть в проекте, запущено на продакшене)
 ```java
 @Component
 public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatStrategy {
 
-   private static final Map FIGIES = Map.of(
-           "BBG008NMBXN8", 1    // Robinhood
-   );
+    private static final Map FIGIES = Map.of(
+            "TCS00A107UL4", 1    // Tinkoff
+    );
 
-   public Map<String, Integer> getFigies() {
-      return FIGIES;
-   }
+    public Map<String, Integer> getFigies() {
+        return FIGIES;
+    }
 
-   @Override
-   public AInstrumentByFiatStrategy.BuyCriteria getBuyCriteria() {
-      return AInstrumentByFiatStrategy.BuyCriteria.builder().lessThenPercentile(40).build();
-   }
+    @Override
+    public AInstrumentByFiatStrategy.BuyCriteria getBuyCriteria() {
+        return AInstrumentByFiatStrategy.BuyCriteria.builder().lessThenPercentile(40).build();
+    }
 
-   @Override
-   public AInstrumentByFiatStrategy.SellCriteria getSellCriteria() {
-      return AInstrumentByFiatStrategy.SellCriteria.builder().takeProfitPercent(1f).stopLossPercent(3f).build();
-   }
+    @Override
+    public AInstrumentByFiatStrategy.SellCriteria getSellCriteria() {
+        return AInstrumentByFiatStrategy.SellCriteria.builder().takeProfitPercent(1f).stopLossPercent(3f).build();
+    }
 
-   @Override
-   public boolean isEnabled() {
-      return true;
-   }
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
 ```
 ##### Атрибуты стратегии
@@ -112,7 +114,7 @@ public class BuyP40AndTP1PercentAndSL3PercentStrategy extends AInstrumentByFiatS
 
 ##### Свойства
 ```properties
-candle.history.duration: период истории свечей от времени запуска теста, используется при эмуляции потока свечей. Пример P10D (формат java.time.Duration)
+candle.history.duration: период истории свечей от времени запуска теста, используется при эмуляции потока свечей. Пример P30D (формат java.time.Duration)
 ```
 ##### Запуск через gradlew
 Требуется docker, jdk 21+
@@ -166,13 +168,13 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
 4. В консоле будет лог операций, статистика по адресу http://localhost:10000
 
 # CI/CD
-При коммите, проект собирается через github actions и docker образы публикуются в https://hub.docker.com/repository/docker/romanew/invest.
-Экземпляры приложения разворачивается на сервере c помощью GitHub Actions.
+По коммиту, проект собирается с помощью github actions и docker образы публикуются в https://hub.docker.com/repository/docker/romanew/invest.
+Экземпляр приложения разворачивается на сервере c помощью GitHub Actions.
 
 На данный момент торгуются несколько стратегий, которые обгоняют рынок.
 Актуальное состояние можно посмотреть:
-- Sandbox 1: https://invest-sandbox.struchev.site (песочница, акции, ветка sandbox)
-- Sandbox 2: https://invest-sandbox-2.struchev.site (песочница, арбитраж валюты, ветка sandbox-2)
+- Sandbox 1: https://invest-sandbox.struchev.site (песочница, акции, **ветка sandbox**)
+- Sandbox 2: https://invest-sandbox-2.struchev.site (песочница, арбитраж валюты, **ветка sandbox-2**)
 - Live: https://invest.struchev.site (боевые стратегии, ветка master)
 
 # Мониторинг приложения
