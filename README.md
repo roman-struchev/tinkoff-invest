@@ -1,5 +1,6 @@
 # Торговый робот для Тинкофф Инвестиций
 🥇 The winner in [Tinkoff Invest Robot Contest #1 2022](https://github.com/Tinkoff/invest-robot-contest) (номинация java)
+
 🥇 The winner in [Tinkoff Invest Robot Contest #2 2024](https://investcontest.github.io/2024/results/)
 
 # Конфигурация
