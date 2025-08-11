@@ -24,14 +24,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Copy docker-compose-tests.yml
-        uses: garygrossgarten/github-action-scp@release
+      - name: Copy docker-compose.yml
+        uses: appleboy/scp-action@master
         with:
-          local: docker-compose-tests.yml
-          remote: ./tinkoff-invest-robot/docker-compose-tests.yml
           host: 31.186.136.15
           username: root
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
+          source: docker-compose-app-tests.yml
+          target: ~/tinkoff-invest-robot
 
       - name: Start using docker-compose
         uses: appleboy/ssh-action@master
