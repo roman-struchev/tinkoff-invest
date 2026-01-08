@@ -2,7 +2,7 @@ name: Deploy production
 on:
   push:
     branches:
-      - sandbox
+      - sandbox-1-2026
 
 jobs:
   publish:
@@ -13,7 +13,7 @@ jobs:
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: romanew/invest:sandbox-latest
+          name: romanew/invest:sandbox-1-2026-latest
           username: ${{ secrets.DOCKER_PUBLISH_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_PUBLISH_REGISTRY_PASSWORD }}
           dockerfile: Dockerfile.App
@@ -30,7 +30,7 @@ jobs:
           host: 31.186.136.15
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY_PERSONAL }}
-          source: docker-compose-app-sandbox.yml
+          source: docker-compose-app-sandbox-1-2026.yml
           target: ~/tinkoff-invest-robot
 
       - name: Start using docker-compose
@@ -46,6 +46,6 @@ jobs:
             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             export TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
             export TELEGRAM_BOT_CHAT_ID=${{ secrets.TELEGRAM_BOT_CHAT_ID }}
-            docker-compose -f docker-compose-app-sandbox.yml down
-            docker-compose -f docker-compose-app-sandbox.yml pull
-            docker-compose -f docker-compose-app-sandbox.yml up -d
+            docker-compose -f docker-compose-app-sandbox-1-2026.yml down
+            docker-compose -f docker-compose-app-sandbox-1-2026.yml pull
+            docker-compose -f docker-compose-app-sandbox-1-2026.yml up -d

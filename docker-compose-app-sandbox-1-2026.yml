@@ -1,20 +1,20 @@
 version: '3'
 
 services:
-  tinkoff-invest-robot-sandbox:
-    image: 'romanew/invest:sandbox-latest'
-    container_name: tinkoff-invest-robot-sandbox
+  tinkoff-invest-robot-sandbox-1-2026:
+    image: 'romanew/invest:sandbox-1-2026-latest'
+    container_name: tinkoff-invest-robot-sandbox-1-2026
     network_mode: host
     environment:
       - server.port=10003
-      - spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/invest-sandbox
+      - spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/invest-sandbox-1-2026
       - spring.datasource.username=${POSTGRES_USER}
       - spring.datasource.password=${POSTGRES_PASSWORD}
       - candle.listener.enabled=true
       - tinkoff.emulator=false
       - tinkoff.is-token-sandbox=true
       - tinkoff.token=${TINKOFF_TOKEN_SANDBOX}
-      - tinkoff.account-id=c5793c4f-28ed-406d-ad67-a389147cf9d4
+      - tinkoff.account-id=548c3a25-62b2-4973-bbab-8d0e44f11b48
 #      - telegram.bot.token=${TELEGRAM_BOT_TOKEN}
 #      - telegram.bot.chat-id=${TELEGRAM_BOT_CHAT_ID}
     restart: always
