@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  tinkoff-invest-robot-sandbox-1-2026:
-    image: 'romanew/invest:sandbox-1-2026-latest'
-    container_name: tinkoff-invest-robot-sandbox-1-2026
+  tinkoff-invest-robot-sandbox-2026-1:
+    image: 'romanew/invest:sandbox-2026-1-latest'
+    container_name: tinkoff-invest-robot-sandbox-2026-1
     network_mode: host
     environment:
       - server.port=10003
-      - spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/invest-sandbox-1-2026
+      - spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/invest-sandbox-2026-1
       - spring.datasource.username=${POSTGRES_USER}
       - spring.datasource.password=${POSTGRES_PASSWORD}
       - candle.listener.enabled=true
