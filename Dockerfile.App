@@ -3,6 +3,6 @@ WORKDIR /app
 COPY . ./
 RUN gradle clean bootJar --info
 
-FROM openjdk:21-slim
+FROM eclipse-temurin:21-jre
 COPY --from=build /app/build/libs/tinkoff-invest-robot-*.jar application.jar
 ENTRYPOINT ["java", "-jar", "application.jar"]
