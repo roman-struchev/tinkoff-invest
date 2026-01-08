@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class HKDByCNYStrategy extends AInstrumentByInstrumentStrategy {
+public class CNYFByUSDFDp03Strategy extends AInstrumentByInstrumentStrategy {
 
     private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
-            .put("BBG0013HRTL0", 7000) // CNY
-            .put("BBG0013HSW87", 8000) // HKD
+            .put("FUTCNYRUBF00", 7) // CNY
+            .put("FUTUSDRUBF00", 1) // USDRUBF
             .build();
 
     public Map<String, Integer> getFigies() {
@@ -19,6 +19,11 @@ public class HKDByCNYStrategy extends AInstrumentByInstrumentStrategy {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public float getMinimalDropPercent() {
+        return 0.3f;
     }
 }

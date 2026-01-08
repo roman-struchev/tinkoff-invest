@@ -6,11 +6,12 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
+public class CNYFByUSDFByEURFStrategy extends AInstrumentByInstrumentStrategy {
 
-    private static final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
-            .put("BBG0013HRTL0", 7000) // CNY
-            .put("BBG0013HJJ31", 1000) // EUR
+    private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
+            .put("FUTCNYRUBF00", 7) // CNY
+            .put("FUTUSDRUBF00", 1) // USDRUBF
+            .put("FUTEURRUBF00", 1) // EURRUBF
             .build();
 
     public Map<String, Integer> getFigies() {
@@ -19,7 +20,6 @@ public class EURByCNYStrategy extends AInstrumentByInstrumentStrategy {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
-
