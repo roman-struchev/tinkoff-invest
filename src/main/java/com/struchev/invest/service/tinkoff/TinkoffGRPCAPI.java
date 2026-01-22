@@ -11,6 +11,7 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 @Service
@@ -34,14 +35,14 @@ public class TinkoffGRPCAPI extends ATinkoffAPI {
                     OrderDirection.ORDER_DIRECTION_BUY, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
                     .commission(ConvertorUtils.toBigDecimal(result.getInitialCommission(), 8))
-                    .price(ConvertorUtils.toBigDecimal(result.getInitialOrderPricePt(), 4, price))
+                    .price(ConvertorUtils.toBigDecimal(result.getInitialOrderPricePt(), 4, price).divide(BigDecimal.valueOf(count), 4, RoundingMode.HALF_EVEN))
                     .build();
         } else {
             var result = getApi().getOrdersService().postOrderSync(instrument.getFigi(), quantity, quotation,
                     OrderDirection.ORDER_DIRECTION_BUY, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
                     .commission(ConvertorUtils.toBigDecimal(result.getInitialCommission(), 8))
-                    .price(ConvertorUtils.toBigDecimal(result.getInitialOrderPricePt(), 4, price))
+                    .price(ConvertorUtils.toBigDecimal(result.getInitialOrderPricePt(), 4, price).divide(BigDecimal.valueOf(count), 4, RoundingMode.HALF_EVEN))
                     .build();
         }
     }
@@ -61,14 +62,14 @@ public class TinkoffGRPCAPI extends ATinkoffAPI {
                     OrderDirection.ORDER_DIRECTION_SELL, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
                     .commission(ConvertorUtils.toBigDecimal(result.getInitialCommission(), 8))
-                    .price(ConvertorUtils.toBigDecimal(result.getInitialOrderPricePt(), 4, price))
+                    .price(ConvertorUtils.toBigDecimal(result.getInitialOrderPricePt(), 4, price).divide(BigDecimal.valueOf(count), 4, RoundingMode.HALF_EVEN))
                     .build();
         } else {
             var result = getApi().getOrdersService().postOrderSync(instrument.getFigi(), quantity, quotation,
                     OrderDirection.ORDER_DIRECTION_SELL, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
                     .commission(ConvertorUtils.toBigDecimal(result.getInitialCommission(), 8))
-                    .price(ConvertorUtils.toBigDecimal(result.getInitialOrderPricePt(), 4, price))
+                    .price(ConvertorUtils.toBigDecimal(result.getInitialOrderPricePt(), 4, price).divide(BigDecimal.valueOf(count), 4, RoundingMode.HALF_EVEN))
                     .build();
         }
     }
