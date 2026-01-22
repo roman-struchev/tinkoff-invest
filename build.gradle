@@ -42,8 +42,7 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxjava:3.0.9'
 
     // tinkoff grpc lib
-    implementation 'ru.tinkoff.piapi:java-sdk-core:1.5'
-    implementation 'io.grpc:grpc-api:1.43.0'
+    implementation 'ru.tinkoff.piapi:java-sdk-core:1.28'
 
     // monitoring
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
