@@ -12,7 +12,7 @@ public class CNYFByUSDFByEURFByGoldFDp04Strategy extends AInstrumentByInstrument
             .put("FUTCNYRUBF00", 7) // CNY
             .put("FUTUSDRUBF00", 1) // USDRUBF
             .put("FUTEURRUBF00", 1) // EURRUBF
-            .put("FUTGLDRUBF00", 1) // GLDRUBF
+            .put("FUTGLDRUBF00", 7) // GLDRUBF
             .build();
 
     public Map<String, Integer> getFigies() {

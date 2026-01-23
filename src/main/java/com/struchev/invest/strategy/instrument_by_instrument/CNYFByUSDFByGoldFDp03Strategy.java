@@ -11,7 +11,7 @@ public class CNYFByUSDFByGoldFDp03Strategy extends AInstrumentByInstrumentStrate
     private final Map<String, Integer> FIGIES = new ImmutableMap.Builder<String, Integer>()
             .put("FUTCNYRUBF00", 7) // CNY
             .put("FUTUSDRUBF00", 1) // USDRUBF
-            .put("FUTGLDRUBF00", 1) // GLDRUBF
+            .put("FUTGLDRUBF00", 7) // GLDRUBF
             .build();
 
     public Map<String, Integer> getFigies() {
