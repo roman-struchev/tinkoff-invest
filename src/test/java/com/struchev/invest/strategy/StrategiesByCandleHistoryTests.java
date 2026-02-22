@@ -61,7 +61,7 @@ class StrategiesByCandleHistoryTests {
         strategySelector.getFigiesForActiveStrategies().stream()
                 .flatMap(figi -> candleRepository.findByFigiAndIntervalAndDateTimeAfterOrderByDateTime(figi, "1min", startDateTime).stream())
                 .sorted(Comparator.comparing(CandleDomainEntity::getDateTime))
-                .forEach(c -> purchaseService.observeNewCandle(c));
+                .forEach(c -> purchaseService.observeCandleNoThrow(c));
 
         // Логируем отчеты
         reportService.logReportInstrumentByFiat(reportService.buildReportInstrumentByFiat());
