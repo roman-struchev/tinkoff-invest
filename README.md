@@ -168,6 +168,18 @@ JPYbyCNYByEURByGBPStrategy | init amount 1000.00 Иена             | last amo
     ```
 4. В консоле будет лог операций, статистика по адресу http://localhost:10000
 
+# TLS-сертификат T-Bank Invest API
+API отдаёт сертификат УЦ Минцифры РФ, которого нет в truststore JDK — без него приложение падает
+на старте с `PKIX path building failed`. Корень лежит в [certs/](certs/) и импортируется в `cacerts`
+при сборке образов, отдельных действий не требует.
+Источник: https://gu-st.ru/content/lending/russian_trusted_root_ca_pem.crt, действителен до 2032-02-27.
+
+Для запуска без Docker (`./gradlew bootRun`) его нужно добавить в JDK вручную:
+```shell
+keytool -importcert -trustcacerts -cacerts -storepass changeit \
+  -alias russian_trusted_root_ca -file certs/russian_trusted_root_ca.pem
+```
+
 # CI/CD
 По коммиту, проект собирается с помощью github actions и docker образы публикуются в https://hub.docker.com/repository/docker/romanew/invest.
 Экземпляр приложения разворачивается на сервере c помощью GitHub Actions.
