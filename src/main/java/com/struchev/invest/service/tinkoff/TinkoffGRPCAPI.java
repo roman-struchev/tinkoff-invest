@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -35,14 +36,14 @@ public class TinkoffGRPCAPI extends ATinkoffAPI {
                     OrderDirection.ORDER_DIRECTION_BUY, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
                     .commission(ConvertorUtils.toBigDecimal(result.getInitialCommission(), 8))
-                    .price(ConvertorUtils.toBigDecimal(result.getExecutedOrderPrice(), 4, price))
+                    .price(getOrderPrice(result.getInitialOrderPricePt(), result.getExecutedOrderPrice(), price, count))
                     .build();
         } else {
             var result = getApi().getOrdersService().postOrderSync(instrument.getFigi(), quantity, quotation,
                     OrderDirection.ORDER_DIRECTION_BUY, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
                     .commission(ConvertorUtils.toBigDecimal(result.getInitialCommission(), 8))
-                    .price(ConvertorUtils.toBigDecimal(result.getExecutedOrderPrice(), 4, price))
+                    .price(getOrderPrice(result.getInitialOrderPricePt(), result.getExecutedOrderPrice(), price, count))
                     .build();
         }
     }
@@ -62,15 +63,31 @@ public class TinkoffGRPCAPI extends ATinkoffAPI {
                     OrderDirection.ORDER_DIRECTION_SELL, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
                     .commission(ConvertorUtils.toBigDecimal(result.getInitialCommission(), 8))
-                    .price(ConvertorUtils.toBigDecimal(result.getExecutedOrderPrice(), 4, price))
+                    .price(getOrderPrice(result.getInitialOrderPricePt(), result.getExecutedOrderPrice(), price, count))
                     .build();
         } else {
             var result = getApi().getOrdersService().postOrderSync(instrument.getFigi(), quantity, quotation,
                     OrderDirection.ORDER_DIRECTION_SELL, getAccountId(), OrderType.ORDER_TYPE_MARKET, uuid);
             return OrderResult.builder()
                     .commission(ConvertorUtils.toBigDecimal(result.getInitialCommission(), 8))
-                    .price(ConvertorUtils.toBigDecimal(result.getExecutedOrderPrice(), 4, price))
+                    .price(getOrderPrice(result.getInitialOrderPricePt(), result.getExecutedOrderPrice(), price, count))
                     .build();
         }
+    }
+
+    /**
+     * Цена за один инструмент по результату заявки
+     * Фьючерсы торгуются в пунктах, свечи и стратегии оперируют ими же, поэтому для них берем стоимость
+     * заявки в пунктах (initial_order_price_pt) и делим на количество инструментов
+     * Для остальных инструментов это поле не заполняется, берем среднюю цену исполнения (executed_order_price),
+     * а если и ее нет (песочница отдает 0) - цену, по которой отправляли заявку
+     */
+    private BigDecimal getOrderPrice(Quotation initialOrderPricePt, MoneyValue executedOrderPrice,
+                                     BigDecimal price, Integer count) {
+        var orderPricePt = ConvertorUtils.toBigDecimal(initialOrderPricePt, 4);
+        if (orderPricePt.compareTo(BigDecimal.ZERO) != 0) {
+            return orderPricePt.divide(BigDecimal.valueOf(count), 4, RoundingMode.HALF_EVEN);
+        }
+        return ConvertorUtils.toBigDecimal(executedOrderPrice, 4, price);
     }
 }
